@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrabajoPracticoCAI", "TrabajoPracticoCAI\TrabajoPracticoCAI.csproj", "{B1437A34-F90B-4F1F-90AE-C512804595AE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.API", "src\Products.API\Products.API.csproj", "{36D7AD08-1DC8-4403-A6F3-64DCC31F6E9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Users.API", "src\Users.API\Users.API.csproj", "{B5B80891-E9DB-4645-9AB6-A50C317815C5}"
@@ -21,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B1437A34-F90B-4F1F-90AE-C512804595AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1437A34-F90B-4F1F-90AE-C512804595AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1437A34-F90B-4F1F-90AE-C512804595AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1437A34-F90B-4F1F-90AE-C512804595AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{36D7AD08-1DC8-4403-A6F3-64DCC31F6E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{36D7AD08-1DC8-4403-A6F3-64DCC31F6E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36D7AD08-1DC8-4403-A6F3-64DCC31F6E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU

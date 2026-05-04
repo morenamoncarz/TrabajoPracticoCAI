@@ -1,6 +1,0 @@
-@TrabajoPracticoCAI_HostAddress = http://localhost:5198
-
-GET {{TrabajoPracticoCAI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
