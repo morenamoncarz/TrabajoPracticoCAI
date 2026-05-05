@@ -11,9 +11,9 @@ public class ProductService : IProductService
         _repo = repo;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<IEnumerable<Product>> GetAllAsync(string? categoria = null, string? nombre = null)
     {
-        return await _repo.GetAllAsync();
+        return await _repo.GetAllAsync(categoria, nombre);
     }
 
     public async Task<Product?> GetByIdAsync(Guid id)

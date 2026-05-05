@@ -6,9 +6,17 @@ public class InMemoryProductRepository : IProductRepository
 {
     private readonly Dictionary<Guid, Product> _datos = new();
 
-    public Task<IEnumerable<Product>> GetAllAsync()
+    public Task<IEnumerable<Product>> GetAllAsync(string? categoria = null, string? nombre = null)
     {
         IEnumerable<Product> productos = _datos.Values;
+        if (!string.IsNullOrWhiteSpace(categoria))
+        {
+            productos = productos.Where(p => p.Categoria.Equals(categoria, StringComparison.OrdinalIgnoreCase));
+        }
+        if (!string.IsNullOrWhiteSpace(nombre))
+        {
+            productos = productos.Where(p => p.Nombre.Contains(nombre, StringComparison.OrdinalIgnoreCase));
+        }
         return Task.FromResult(productos);
     }
 

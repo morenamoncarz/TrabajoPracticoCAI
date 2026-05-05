@@ -16,9 +16,9 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] string? categoria = null, [FromQuery] string? nombre = null)
     {
-        var productos = await _service.GetAllAsync();
+        var productos = await _service.GetAllAsync(categoria, nombre);
         return Ok(productos);
     }
 
