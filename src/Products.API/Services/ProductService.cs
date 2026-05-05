@@ -46,4 +46,9 @@ public class ProductService : IProductService
     {
         return await _repo.DeleteAsync(id);
     }
+
+    public async Task<bool> ExisteAsync(string nombre, string categoria)
+    {
+        return await _repo.ExisteAsync(nombre, categoria);
+    }
 }

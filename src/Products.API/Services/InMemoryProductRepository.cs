@@ -46,4 +46,12 @@ public class InMemoryProductRepository : IProductRepository
     {
         return Task.FromResult(_datos.Remove(id));
     }
+
+    public Task<bool> ExisteAsync(string nombre, string categoria)
+    {
+        var existe = _datos.Values.Any(p =>
+            p.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase) &&
+            p.Categoria.Equals(categoria, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(existe);
+    }
 }

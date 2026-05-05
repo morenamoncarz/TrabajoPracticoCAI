@@ -1,4 +1,5 @@
-﻿using Products.API.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using Products.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,30 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IProductRepository, InMemoryProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = ctx =>
+    {
+        var errores = string.Join("; ", ctx.ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage));
+
+        return new ObjectResult(new
+        {
+            type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            title = "Bad Request",
+            status = 400,
+            detail = "Los datos son invalidos.",
+            instance = ctx.HttpContext.Request.Path.Value,
+            errorCode = "PRD-002",
+            errorMessage = errores
+        })
+        {
+            StatusCode = 400
+        };
+    };
+});
 
 var app = builder.Build();
 
