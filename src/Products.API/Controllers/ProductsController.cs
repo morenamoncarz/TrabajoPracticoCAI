@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Products.API.Models;
 using Products.API.Services;
 
 namespace Products.API.Controllers;
@@ -30,5 +31,12 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
         return Ok(producto);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] Product producto)
+    {
+        var creado = await _service.CreateAsync(producto);
+        return Ok(creado);
     }
 }

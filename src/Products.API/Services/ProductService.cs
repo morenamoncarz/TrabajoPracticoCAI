@@ -20,4 +20,12 @@ public class ProductService : IProductService
     {
         return await _repo.GetByIdAsync(id);
     }
+
+    public async Task<Product> CreateAsync(Product producto)
+    {
+        producto.Id = Guid.NewGuid();
+        producto.FechaCreacion = DateTime.UtcNow;
+        await _repo.AddAsync(producto);
+        return producto;
+    }
 }
