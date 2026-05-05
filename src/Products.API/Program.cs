@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Products.API.ExceptionHandlers;
 using Products.API.Middleware;
 using Products.API.Services;
@@ -78,14 +79,34 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.MapHealthChecks("/health");
+static Task EscribirHealthCheck(HttpContext context, HealthReport report)
+{
+    context.Response.ContentType = "application/json";
+    var respuesta = new
+    {
+        estado = report.Status.ToString(),
+        checks = report.Entries.Select(e => new
+        {
+            nombre = e.Key,
+            estado = e.Value.Status.ToString()
+        })
+    };
+    return context.Response.WriteAsJsonAsync(respuesta);
+}
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = EscribirHealthCheck
+});
 app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
-    Predicate = check => check.Tags.Contains("ready")
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = EscribirHealthCheck
 });
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
-    Predicate = _ => false
+    Predicate = _ => false,
+    ResponseWriter = EscribirHealthCheck
 });
 
 app.Run();
