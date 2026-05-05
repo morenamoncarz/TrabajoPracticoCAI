@@ -1,8 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.API.ExceptionHandlers;
 using Products.API.Services;
+using Serilog;
+using Serilog.Formatting.Compact;
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Servicio", "Products.API")
+    .WriteTo.Console()
+    .WriteTo.File(new CompactJsonFormatter(), "logs/products-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -53,6 +64,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
