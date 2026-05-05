@@ -37,6 +37,6 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Product producto)
     {
         var creado = await _service.CreateAsync(producto);
-        return Ok(creado);
+        return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
     }
 }
