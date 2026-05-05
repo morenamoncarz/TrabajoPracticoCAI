@@ -28,19 +28,6 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var producto = await _service.GetByIdAsync(id);
-        if (producto == null)
-        {
-            return NotFound(new
-            {
-                type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                title = "Not Found",
-                status = 404,
-                detail = "El recurso solicitado no fue encontrado.",
-                instance = HttpContext.Request.Path.Value,
-                errorCode = "PRD-001",
-                errorMessage = "Producto no encontrado."
-            });
-        }
         return Ok(producto);
     }
 
@@ -48,19 +35,6 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Product producto)
     {
-        if (await _service.ExisteAsync(producto.Nombre, producto.Categoria))
-        {
-            return Conflict(new
-            {
-                type = "https://tools.ietf.org/html/rfc7231#section-6.5.9",
-                title = "Conflict",
-                status = 409,
-                detail = "Ya existe un recurso con esos datos.",
-                instance = HttpContext.Request.Path.Value,
-                errorCode = "PRD-003",
-                errorMessage = $"Ya existe un producto con ese nombre en la categoria '{producto.Categoria}'."
-            });
-        }
         var creado = await _service.CreateAsync(producto);
         return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
     }
@@ -70,19 +44,6 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] Product producto)
     {
         var actualizado = await _service.UpdateAsync(id, producto);
-        if (actualizado == null)
-        {
-            return NotFound(new
-            {
-                type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                title = "Not Found",
-                status = 404,
-                detail = "El recurso solicitado no fue encontrado.",
-                instance = HttpContext.Request.Path.Value,
-                errorCode = "PRD-001",
-                errorMessage = "Producto no encontrado."
-            });
-        }
         return Ok(actualizado);
     }
 
@@ -90,20 +51,7 @@ public class ProductsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var borrado = await _service.DeleteAsync(id);
-        if (!borrado)
-        {
-            return NotFound(new
-            {
-                type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                title = "Not Found",
-                status = 404,
-                detail = "El recurso solicitado no fue encontrado.",
-                instance = HttpContext.Request.Path.Value,
-                errorCode = "PRD-001",
-                errorMessage = "Producto no encontrado."
-            });
-        }
+        await _service.DeleteAsync(id);
         return NoContent();
     }
 }
