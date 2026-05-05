@@ -15,6 +15,7 @@ public class ProductsController : ControllerBase
         _service = service;
     }
 
+    /// <summary>Lista todos los productos.</summary>
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? categoria = null, [FromQuery] string? nombre = null)
     {
@@ -22,6 +23,7 @@ public class ProductsController : ControllerBase
         return Ok(productos);
     }
 
+    /// <summary>Obtiene un producto por su id.</summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -42,6 +44,7 @@ public class ProductsController : ControllerBase
         return Ok(producto);
     }
 
+    /// <summary>Crea un nuevo producto.</summary>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Product producto)
     {
@@ -62,6 +65,7 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
     }
 
+    /// <summary>Actualiza un producto existente.</summary>
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] Product producto)
     {
@@ -82,6 +86,7 @@ public class ProductsController : ControllerBase
         return Ok(actualizado);
     }
 
+    /// <summary>Elimina un producto.</summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
