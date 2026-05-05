@@ -5,12 +5,20 @@ namespace Products.API.ExceptionHandlers;
 
 public class BusinessRuleExceptionHandler : IExceptionHandler
 {
+    private readonly ILogger<BusinessRuleExceptionHandler> _logger;
+
+    public BusinessRuleExceptionHandler(ILogger<BusinessRuleExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         if (exception is not BusinessRuleException ex)
         {
             return false;
         }
+        _logger.LogWarning(ex, "Regla de negocio violada");
         var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 409;
         await context.Response.WriteAsJsonAsync(new

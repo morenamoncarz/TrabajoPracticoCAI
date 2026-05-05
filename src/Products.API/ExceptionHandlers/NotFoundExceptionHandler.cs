@@ -5,12 +5,20 @@ namespace Products.API.ExceptionHandlers;
 
 public class NotFoundExceptionHandler : IExceptionHandler
 {
+    private readonly ILogger<NotFoundExceptionHandler> _logger;
+
+    public NotFoundExceptionHandler(ILogger<NotFoundExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         if (exception is not NotFoundException ex)
         {
             return false;
         }
+        _logger.LogWarning(ex, "Recurso no encontrado");
         var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 404;
         await context.Response.WriteAsJsonAsync(new
