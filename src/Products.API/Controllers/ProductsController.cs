@@ -16,6 +16,11 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Lista todos los productos.</summary>
+    /// <remarks>
+    /// Acepta filtros opcionales por categoria y nombre (substring case-insensitive).
+    ///
+    /// Ejemplo: GET /api/products?categoria=Electronica&amp;nombre=Dell
+    /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -26,6 +31,26 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Obtiene un producto por su id.</summary>
+    /// <remarks>
+    /// Respuesta 200 OK:
+    ///
+    ///     {
+    ///       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///       "nombre": "Notebook Dell XPS 15",
+    ///       "descripcion": "Laptop 15 pulgadas, 32GB RAM",
+    ///       "precio": 1500.00,
+    ///       "stock": 10,
+    ///       "categoria": "Electronica",
+    ///       "fechaCreacion": "2024-01-15T10:30:00Z"
+    ///     }
+    ///
+    /// Respuesta 404 Not Found (PRD-001):
+    ///
+    ///     {
+    ///       "errorCode": "PRD-001",
+    ///       "errorMessage": "Producto no encontrado."
+    ///     }
+    /// </remarks>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -37,6 +62,26 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Crea un nuevo producto.</summary>
+    /// <remarks>
+    /// Ejemplo de request body:
+    ///
+    ///     {
+    ///       "nombre": "Notebook Dell XPS 15",
+    ///       "descripcion": "Laptop 15 pulgadas, 32GB RAM",
+    ///       "precio": 1500.00,
+    ///       "stock": 10,
+    ///       "categoria": "Electronica"
+    ///     }
+    ///
+    /// Respuesta 201 Created: el producto con id y fechaCreacion asignados.
+    ///
+    /// Respuesta 409 Conflict (PRD-003):
+    ///
+    ///     {
+    ///       "errorCode": "PRD-003",
+    ///       "errorMessage": "Ya existe un producto con ese nombre en la categoria 'Electronica'."
+    ///     }
+    /// </remarks>
     [HttpPost]
     [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,6 +94,17 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Actualiza un producto existente.</summary>
+    /// <remarks>
+    /// Ejemplo de request body (mismos campos que Create):
+    ///
+    ///     {
+    ///       "nombre": "Notebook Dell XPS 15",
+    ///       "descripcion": "Laptop 15 pulgadas, 64GB RAM",
+    ///       "precio": 1750.00,
+    ///       "stock": 8,
+    ///       "categoria": "Electronica"
+    ///     }
+    /// </remarks>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,6 +117,7 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Elimina un producto.</summary>
+    /// <remarks>Devuelve 204 sin body si el producto existia. Devuelve 404 con PRD-001 si no existe.</remarks>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
