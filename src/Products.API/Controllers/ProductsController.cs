@@ -39,4 +39,26 @@ public class ProductsController : ControllerBase
         var creado = await _service.CreateAsync(producto);
         return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] Product producto)
+    {
+        var actualizado = await _service.UpdateAsync(id, producto);
+        if (actualizado == null)
+        {
+            return NotFound();
+        }
+        return Ok(actualizado);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var borrado = await _service.DeleteAsync(id);
+        if (!borrado)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
 }

@@ -28,4 +28,22 @@ public class ProductService : IProductService
         await _repo.AddAsync(producto);
         return producto;
     }
+
+    public async Task<Product?> UpdateAsync(Guid id, Product producto)
+    {
+        var existente = await _repo.GetByIdAsync(id);
+        if (existente == null)
+        {
+            return null;
+        }
+        producto.Id = id;
+        producto.FechaCreacion = existente.FechaCreacion;
+        await _repo.UpdateAsync(producto);
+        return producto;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        return await _repo.DeleteAsync(id);
+    }
 }
