@@ -18,7 +18,7 @@ public class NotFoundExceptionHandler : IExceptionHandler
         {
             return false;
         }
-        _logger.LogWarning(ex, "Recurso no encontrado");
+        _logger.LogWarning(ex, "Recurso no encontrado. ErrorCode: {ErrorCode}", ex.ErrorCode);
         var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 404;
         await context.Response.WriteAsJsonAsync(new

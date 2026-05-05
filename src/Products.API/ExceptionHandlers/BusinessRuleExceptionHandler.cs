@@ -18,7 +18,7 @@ public class BusinessRuleExceptionHandler : IExceptionHandler
         {
             return false;
         }
-        _logger.LogWarning(ex, "Regla de negocio violada");
+        _logger.LogWarning(ex, "Regla de negocio violada. ErrorCode: {ErrorCode}", ex.ErrorCode);
         var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 409;
         await context.Response.WriteAsJsonAsync(new

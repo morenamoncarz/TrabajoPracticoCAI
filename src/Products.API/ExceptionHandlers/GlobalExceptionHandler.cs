@@ -13,7 +13,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Error inesperado");
+        _logger.LogError(exception, "Error inesperado. ErrorCode: {ErrorCode}", "PRD-005");
         var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 500;
         await context.Response.WriteAsJsonAsync(new
