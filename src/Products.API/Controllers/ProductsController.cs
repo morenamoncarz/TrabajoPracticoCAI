@@ -54,7 +54,7 @@ public class ProductsController : ControllerBase
                 status = 409,
                 detail = "Ya existe un recurso con esos datos.",
                 instance = HttpContext.Request.Path.Value,
-                errorCode = "PRD-002",
+                errorCode = "PRD-003",
                 errorMessage = $"Ya existe un producto con ese nombre en la categoria '{producto.Categoria}'."
             });
         }
