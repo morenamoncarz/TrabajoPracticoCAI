@@ -11,4 +11,10 @@ public class InMemoryProductRepository : IProductRepository
         IEnumerable<Product> productos = _datos.Values;
         return Task.FromResult(productos);
     }
+
+    public Task<Product?> GetByIdAsync(Guid id)
+    {
+        _datos.TryGetValue(id, out var producto);
+        return Task.FromResult(producto);
+    }
 }

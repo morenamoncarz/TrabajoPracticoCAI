@@ -5,4 +5,5 @@ namespace Products.API.Services;
 public interface IProductService
 {
     Task<IEnumerable<Product>> GetAllAsync();
+    Task<Product?> GetByIdAsync(Guid id);
 }
