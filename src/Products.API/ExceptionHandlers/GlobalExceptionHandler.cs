@@ -6,6 +6,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
+        var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 500;
         await context.Response.WriteAsJsonAsync(new
         {
@@ -14,6 +15,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             status = 500,
             detail = "Ocurrio un error inesperado.",
             instance = context.Request.Path.Value,
+            correlationId,
             errorCode = "PRD-005",
             errorMessage = "Error interno al procesar el producto."
         }, cancellationToken: cancellationToken);

@@ -11,6 +11,7 @@ public class NotFoundExceptionHandler : IExceptionHandler
         {
             return false;
         }
+        var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 404;
         await context.Response.WriteAsJsonAsync(new
         {
@@ -19,6 +20,7 @@ public class NotFoundExceptionHandler : IExceptionHandler
             status = 404,
             detail = "El recurso solicitado no fue encontrado.",
             instance = context.Request.Path.Value,
+            correlationId,
             errorCode = ex.ErrorCode,
             errorMessage = ex.Message
         }, cancellationToken: cancellationToken);

@@ -45,6 +45,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
             .SelectMany(v => v.Errors)
             .Select(e => e.ErrorMessage));
 
+        var correlationId = ctx.HttpContext.Response.Headers["X-Correlation-Id"].ToString();
         return new ObjectResult(new
         {
             type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
@@ -52,6 +53,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
             status = 400,
             detail = "Los datos son invalidos.",
             instance = ctx.HttpContext.Request.Path.Value,
+            correlationId,
             errorCode = "PRD-002",
             errorMessage = errores
         })

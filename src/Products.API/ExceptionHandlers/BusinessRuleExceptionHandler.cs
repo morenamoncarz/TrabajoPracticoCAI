@@ -11,6 +11,7 @@ public class BusinessRuleExceptionHandler : IExceptionHandler
         {
             return false;
         }
+        var correlationId = context.Response.Headers["X-Correlation-Id"].ToString();
         context.Response.StatusCode = 409;
         await context.Response.WriteAsJsonAsync(new
         {
@@ -19,6 +20,7 @@ public class BusinessRuleExceptionHandler : IExceptionHandler
             status = 409,
             detail = "Ya existe un recurso con esos datos.",
             instance = context.Request.Path.Value,
+            correlationId,
             errorCode = ex.ErrorCode,
             errorMessage = ex.Message
         }, cancellationToken: cancellationToken);
