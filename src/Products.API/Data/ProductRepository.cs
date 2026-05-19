@@ -46,9 +46,19 @@ public class ProductRepository : IProductRepository
     public async Task AddAsync(Product producto)
     {
         using var conn = CreateConnection();
-        var sql = $"INSERT INTO products (id, nombre, descripcion, precio, stock, categoria, fechaCreacion) " +
-                  $"VALUES ('{producto.Id}', '{producto.Nombre}', '{producto.Descripcion}', {producto.Precio}, {producto.Stock}, '{producto.Categoria}', '{producto.FechaCreacion:o}')";
-        await conn.ExecuteAsync(sql);
+        await conn.ExecuteAsync(
+            "INSERT INTO products (id, nombre, descripcion, precio, stock, categoria, fechaCreacion) " +
+            "VALUES (@Id, @Nombre, @Descripcion, @Precio, @Stock, @Categoria, @FechaCreacion)",
+            new
+            {
+                Id = producto.Id.ToString(),
+                producto.Nombre,
+                producto.Descripcion,
+                producto.Precio,
+                producto.Stock,
+                producto.Categoria,
+                FechaCreacion = producto.FechaCreacion.ToString("o")
+            });
     }
 
     public async Task<bool> UpdateAsync(Product producto)
