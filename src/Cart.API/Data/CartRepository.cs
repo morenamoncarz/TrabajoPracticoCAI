@@ -13,8 +13,14 @@ public class CartRepository : ICartRepository
         _config = config;
     }
 
-    private SqliteConnection CreateConnection() =>
-        new(_config.GetConnectionString("DefaultConnection") ?? "Data Source=cart.db");
+    private SqliteConnection CreateConnection()
+    {
+        var conn = new SqliteConnection(_config.GetConnectionString("DefaultConnection") ?? "Data Source=cart.db");
+        conn.Open();
+        // sqlite trae las FK apagadas por default, hay que prenderlas en cada conexion
+        conn.Execute("PRAGMA foreign_keys = ON;");
+        return conn;
+    }
 
     public async Task<Models.Cart?> GetByUsuarioAsync(Guid usuarioId)
     {
