@@ -1,3 +1,4 @@
+using Cart.API.Data;
 using Cart.API.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,11 @@ public static class ServicesExtensions
 
         services.AddProblemDetails();
 
+        services.AddSingleton<DatabaseInitializer>();
+        services.AddScoped<ICartRepository, CartRepository>();
+
         services.AddHealthChecks()
+            .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
             .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api" });
 
         services.AddHealthChecksUI(setup =>
