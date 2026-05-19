@@ -1,5 +1,7 @@
 using Cart.API.Data;
+using Cart.API.ExceptionHandlers;
 using Cart.API.HealthChecks;
+using Cart.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cart.API.Extensions;
@@ -18,10 +20,15 @@ public static class ServicesExtensions
                 c.IncludeXmlComments(xmlPath);
         });
 
+        services.AddExceptionHandler<NotFoundExceptionHandler>();
+        services.AddExceptionHandler<BusinessRuleExceptionHandler>();
+        services.AddExceptionHandler<ValidationExceptionHandler>();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 
         services.AddSingleton<DatabaseInitializer>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ICartService, CartService>();
 
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
