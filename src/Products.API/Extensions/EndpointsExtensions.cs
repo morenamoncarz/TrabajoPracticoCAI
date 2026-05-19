@@ -1,5 +1,5 @@
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Products.API.Extensions;
 
@@ -11,32 +11,19 @@ public static class EndpointsExtensions
 
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
-            ResponseWriter = EscribirHealthCheck
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
         app.MapHealthChecks("/health/ready", new HealthCheckOptions
         {
             Predicate = check => check.Tags.Contains("ready"),
-            ResponseWriter = EscribirHealthCheck
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
         app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
             Predicate = _ => false,
-            ResponseWriter = EscribirHealthCheck
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
-    }
 
-    private static Task EscribirHealthCheck(HttpContext context, HealthReport report)
-    {
-        context.Response.ContentType = "application/json";
-        var respuesta = new
-        {
-            estado = report.Status.ToString(),
-            checks = report.Entries.Select(e => new
-            {
-                nombre = e.Key,
-                estado = e.Value.Status.ToString()
-            })
-        };
-        return context.Response.WriteAsJsonAsync(respuesta);
+        app.MapHealthChecksUI(o => o.UIPath = "/health-ui");
     }
 }

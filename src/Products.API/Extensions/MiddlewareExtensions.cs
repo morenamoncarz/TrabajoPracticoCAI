@@ -14,6 +14,7 @@ public static class MiddlewareExtensions
 
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseSerilogRequestLogging();
+        app.UseMiddleware<AuditMiddleware>();
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
     }

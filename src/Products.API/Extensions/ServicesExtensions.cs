@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Products.API.Data;
 using Products.API.ExceptionHandlers;
+using Products.API.HealthChecks;
 using Products.API.Services;
 
 namespace Products.API.Extensions;
@@ -29,7 +29,14 @@ public static class ServicesExtensions
         services.AddProblemDetails();
 
         services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "ready" });
+            .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
+            .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api" });
+
+        services.AddHealthChecksUI(setup =>
+        {
+            setup.SetEvaluationTimeInSeconds(600);
+            setup.AddHealthCheckEndpoint("Products.API", "/health");
+        }).AddInMemoryStorage();
 
         services.Configure<ApiBehaviorOptions>(options =>
         {
