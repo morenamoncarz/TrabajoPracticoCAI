@@ -31,12 +31,15 @@ public static class ServicesExtensions
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ICartService, CartService>();
 
+        services.AddHttpContextAccessor();
+        services.AddTransient<CorrelationIdPropagationHandler>();
+
         services.AddHttpClient<IProductsClient, ProductsClient>((sp, client) =>
         {
             var baseUrl = sp.GetRequiredService<IConfiguration>()["ProductsApi:BaseUrl"]
                 ?? "http://localhost:5290";
             client.BaseAddress = new Uri(baseUrl);
-        });
+        }).AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
