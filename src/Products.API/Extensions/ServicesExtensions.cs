@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Products.API.Data;
 using Products.API.ExceptionHandlers;
 using Products.API.Services;
 
@@ -18,7 +19,8 @@ public static class ServicesExtensions
             c.IncludeXmlComments(xmlPath);
         });
 
-        services.AddSingleton<IProductRepository, InMemoryProductRepository>();
+        services.AddSingleton<DatabaseInitializer>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
 
         services.AddExceptionHandler<NotFoundExceptionHandler>();
