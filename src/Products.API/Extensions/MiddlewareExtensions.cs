@@ -12,9 +12,9 @@ public static class MiddlewareExtensions
             app.UseSwaggerUI();
         }
 
-        app.UseExceptionHandler();
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseSerilogRequestLogging();
+        app.UseExceptionHandler();
         app.UseHttpsRedirection();
     }
 }
