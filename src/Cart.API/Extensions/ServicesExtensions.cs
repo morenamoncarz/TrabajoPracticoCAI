@@ -1,6 +1,7 @@
 using Cart.API.Data;
 using Cart.API.ExceptionHandlers;
 using Cart.API.HealthChecks;
+using Cart.API.Http;
 using Cart.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,13 @@ public static class ServicesExtensions
         services.AddSingleton<DatabaseInitializer>();
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ICartService, CartService>();
+
+        services.AddHttpClient<IProductsClient, ProductsClient>((sp, client) =>
+        {
+            var baseUrl = sp.GetRequiredService<IConfiguration>()["ProductsApi:BaseUrl"]
+                ?? "http://localhost:5290";
+            client.BaseAddress = new Uri(baseUrl);
+        });
 
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
