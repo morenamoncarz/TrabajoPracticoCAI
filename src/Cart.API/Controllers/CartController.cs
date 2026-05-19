@@ -62,7 +62,7 @@ public class CartController : ControllerBase
     public async Task<IActionResult> AddItem(Guid userId, [FromBody] AddCartItemRequest request)
     {
         var cart = await _service.AddItemAsync(userId, request);
-        return CreatedAtAction(nameof(GetCart), new { userId }, cart);
+        return Ok(cart);
     }
 
     /// <summary>Actualiza la cantidad de un item del carrito.</summary>
@@ -87,7 +87,7 @@ public class CartController : ControllerBase
     public async Task<IActionResult> UpdateItem(Guid userId, Guid productId, [FromBody] UpdateCartItemRequest request)
     {
         var cart = await _service.UpdateItemAsync(userId, productId, request);
-        return CreatedAtAction(nameof(GetCart), new { userId }, cart);
+        return Ok(cart);
     }
 
     /// <summary>Quita un producto del carrito.</summary>
