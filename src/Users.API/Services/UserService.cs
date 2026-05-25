@@ -22,7 +22,10 @@ public class UserService
 
         if (existingUser != null)
         {
-            throw new BusinessRuleException("USR-001", $"El email '{request.Email}' ya está registrado.");
+            throw new BusinessRuleException(
+                "USR-001",
+                $"El email '{request.Email}' ya está registrado."
+            );
         }
 
         // Creamos el usuario nuevo
@@ -32,9 +35,15 @@ public class UserService
             Nombre = request.Nombre,
             Apellido = request.Apellido,
             Email = request.Email,
+
+            // Guardamos el hash y no la contraseña real
             PasswordHash = HashPassword(request.Password),
+
             FechaRegistro = DateTime.UtcNow,
+
+            // En el modelo de C# Activo es bool
             Activo = true,
+
             IntentosFallidos = 0
         };
 
@@ -50,18 +59,24 @@ public class UserService
 
         if (user == null)
         {
-            throw new BusinessRuleException("USR-003", "Credenciales incorrectas.");
+            throw new BusinessRuleException(
+                "USR-003",
+                "Credenciales incorrectas."
+            );
         }
 
-        // Si el usuario ya está bloqueado, no puede iniciar sesión
+        // Si el usuario está bloqueado, no permitimos login
         if (!user.Activo)
         {
-            throw new BusinessRuleException("USR-004", "Usuario bloqueado por demasiados intentos fallidos.");
+            throw new BusinessRuleException(
+                "USR-004",
+                "Usuario bloqueado por demasiados intentos fallidos."
+            );
         }
 
         var passwordHash = HashPassword(request.Password);
 
-        // Si la contraseña no coincide, sumamos un intento fallido
+        // Si la contraseña no coincide
         if (user.PasswordHash != passwordHash)
         {
             user.IntentosFallidos++;
@@ -70,18 +85,26 @@ public class UserService
             if (user.IntentosFallidos >= 3)
             {
                 user.Activo = false;
+
                 _repository.Update(user);
 
-                throw new BusinessRuleException("USR-004", "Usuario bloqueado por demasiados intentos fallidos.");
+                throw new BusinessRuleException(
+                    "USR-004",
+                    "Usuario bloqueado por demasiados intentos fallidos."
+                );
             }
 
             _repository.Update(user);
 
-            throw new BusinessRuleException("USR-003", "Credenciales incorrectas.");
+            throw new BusinessRuleException(
+                "USR-003",
+                "Credenciales incorrectas."
+            );
         }
 
-        // Si el login fue correcto, reiniciamos los intentos fallidos
+        // Si el login es correcto reiniciamos intentos fallidos
         user.IntentosFallidos = 0;
+
         _repository.Update(user);
 
         return MapToResponse(user);
@@ -103,7 +126,7 @@ public class UserService
 
     private string HashPassword(string password)
     {
-        // Hash simple para el TP. No guardamos la contraseña real.
+        // Nunca guardamos la contraseña real
         using var sha256 = SHA256.Create();
 
         var bytes = Encoding.UTF8.GetBytes(password);

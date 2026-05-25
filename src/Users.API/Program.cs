@@ -1,40 +1,67 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 using Users.API.ExceptionHandlers;
 using Users.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregamos soporte para controllers (esto permite usar UsersController)
+// Configuramos Serilog para logs en consola y archivo
+builder.AddAppLogging();
+
+// Agregamos soporte para controllers
 builder.Services.AddControllers();
 
-// Swagger (documentación de la API)
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Registramos nuestras dependencias
-// Cuando alguien pida IUserRepository, usamos UserRepositoryMemory
-builder.Services.AddSingleton<IUserRepository, UserRepositoryMemory>();
+// Base de datos
+builder.Services.AddSingleton<DatabaseInitializer>();
+builder.Services.AddScoped<IUserRepository, UserRepositoryDb>();
 
-// Registramos el servicio donde está la lógica del negocio
+// Lógica de negocio
 builder.Services.AddScoped<UserService>();
 
-// Registramos los manejadores globales de errores
-// Esto permite devolver errorCode y errorMessage en vez de un error genérico
+// Manejo global de errores
 builder.Services.AddExceptionHandler<BusinessRuleExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+// Health checks
+builder.Services.AddHealthChecks()
+    .AddCheck<SqliteHealthCheck>("sqlite-db")
+    .AddCheck("api-status", () =>
+        HealthCheckResult.Healthy("API funcionando correctamente."));
+
 var app = builder.Build();
 
-// Habilitamos Swagger para poder probar la API desde el navegador
+// Inicializamos la base de datos
+using (var scope = app.Services.CreateScope())
+{
+    var databaseInitializer =
+        scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+
+    databaseInitializer.Initialize();
+}
+
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Activamos el manejo global de errores
+// Manejo global de errores
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
-// Mapeamos los controllers (esto activa /api/users)
+// Log automático de requests HTTP
+app.UseSerilogRequestLogging();
+
+// Health checks
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/live");
+app.MapHealthChecks("/health/ready");
+
+// Controllers
 app.MapControllers();
 
 app.Run();
