@@ -51,6 +51,9 @@ app.UseSwaggerUI();
 // Manejo global de errores
 app.UseExceptionHandler();
 
+// Agregamos correlation id a cada request
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.UseHttpsRedirection();
 
 // Log automático de requests HTTP

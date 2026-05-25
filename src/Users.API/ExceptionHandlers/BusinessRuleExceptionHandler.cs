@@ -25,6 +25,9 @@ public class BusinessRuleExceptionHandler : IExceptionHandler
 
         context.Response.StatusCode = statusCode;
 
+        // Tomamos el correlation id generado por el middleware
+        var correlationId = context.Items["X-Correlation-Id"]?.ToString();
+
         await context.Response.WriteAsJsonAsync(new
         {
             type = "about:blank",
@@ -33,7 +36,8 @@ public class BusinessRuleExceptionHandler : IExceptionHandler
             detail = ex.Message,
             instance = context.Request.Path.Value,
             errorCode = ex.ErrorCode,
-            errorMessage = ex.Message
+            errorMessage = ex.Message,
+            correlationId = correlationId
         }, cancellationToken);
 
         return true;

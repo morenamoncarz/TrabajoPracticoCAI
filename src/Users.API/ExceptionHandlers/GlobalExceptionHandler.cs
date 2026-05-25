@@ -12,6 +12,9 @@ public class GlobalExceptionHandler : IExceptionHandler
         // Maneja cualquier error no controlado
         context.Response.StatusCode = 500;
 
+        // Tomamos el correlation id generado por el middleware
+        var correlationId = context.Items["X-Correlation-Id"]?.ToString();
+
         await context.Response.WriteAsJsonAsync(new
         {
             type = "about:blank",
@@ -20,7 +23,8 @@ public class GlobalExceptionHandler : IExceptionHandler
             detail = "Ocurrió un error inesperado.",
             instance = context.Request.Path.Value,
             errorCode = "USR-006",
-            errorMessage = "Error interno al procesar el usuario."
+            errorMessage = "Error interno al procesar el usuario.",
+            correlationId = correlationId
         }, cancellationToken);
 
         return true;
