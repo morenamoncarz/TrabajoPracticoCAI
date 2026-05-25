@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Users.API.ExceptionHandlers;
@@ -10,6 +11,34 @@ builder.AddAppLogging();
 
 // Agregamos soporte para controllers
 builder.Services.AddControllers();
+
+// Personalizamos los errores de validación para devolver USR-002
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errores = context.ModelState
+            .Where(x => x.Value?.Errors.Count > 0)
+            .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage))
+            .ToList();
+
+        var mensaje = errores.Any()
+            ? string.Join("; ", errores)
+            : "Los datos del usuario son inválidos.";
+
+        return new BadRequestObjectResult(new
+        {
+            type = "about:blank",
+            title = "Datos inválidos",
+            status = 400,
+            detail = mensaje,
+            instance = context.HttpContext.Request.Path.Value,
+            errorCode = "USR-002",
+            errorMessage = "Los datos del usuario son inválidos.",
+            correlationId = context.HttpContext.Items["X-Correlation-Id"]?.ToString()
+        });
+    };
+});
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
