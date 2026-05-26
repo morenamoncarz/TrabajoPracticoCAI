@@ -16,6 +16,11 @@ public class DatabaseInitializer
 
     public void Initialize()
     {
+        // SQLite no tiene tipo Guid nativo (lo guarda como TEXT); este handler hace la conversion.
+        SqlMapper.RemoveTypeMap(typeof(Guid));
+        SqlMapper.RemoveTypeMap(typeof(Guid?));
+        SqlMapper.AddTypeHandler(new GuidTypeHandler());
+
         var cs = _config.GetConnectionString("DefaultConnection") ?? "Data Source=products.db";
 
         using var conn = new SqliteConnection(cs);
