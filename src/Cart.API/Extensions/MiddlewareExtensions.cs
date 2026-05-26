@@ -1,4 +1,6 @@
 using Cart.API.Middleware;
+using Serilog;
+using Serilog.Events;
 
 namespace Cart.API.Extensions;
 
@@ -13,7 +15,13 @@ public static class MiddlewareExtensions
         }
 
         app.UseMiddleware<CorrelationIdMiddleware>();
-        app.UseSerilogRequestLogging();
+        app.UseSerilogRequestLogging(options =>
+        {
+            options.GetLevel = (httpContext, _, ex) =>
+                (ex != null) ? LogEventLevel.Error :
+                (httpContext.Request.Path.StartsWithSegments("/health"))
+                    ? LogEventLevel.Verbose : LogEventLevel.Information;
+        });
         app.UseMiddleware<AuditMiddleware>();
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
