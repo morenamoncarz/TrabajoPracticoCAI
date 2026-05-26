@@ -4,6 +4,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Notifications.API.ExceptionHandlers;
 using Notifications.API.Middleware;
 using Notifications.API.Services;
+using Notifications.API.Data;
+using Notifications.API.Repositories;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -27,7 +29,8 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-builder.Services.AddSingleton<INotificationRepository, InMemoryNotificationRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
@@ -66,6 +69,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider
+        .GetRequiredService<DatabaseInitializer>()
+        .Initialize();
+}
 
 if (app.Environment.IsDevelopment())
 {
