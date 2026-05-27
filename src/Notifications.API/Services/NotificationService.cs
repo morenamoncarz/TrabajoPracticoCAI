@@ -1,6 +1,7 @@
 using Notifications.API.DTOs;
 using Notifications.API.Exceptions;
 using Notifications.API.Models;
+using Notifications.API.Repositories;
 
 namespace Notifications.API.Services;
 
