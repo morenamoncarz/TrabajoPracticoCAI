@@ -1,4 +1,6 @@
-﻿namespace Orders.API.Services;
+﻿using System.Text.Json;
+
+namespace Orders.API.Services;
 
 // Cliente HTTP para consultar Products.API
 public class ProductsApiClient
@@ -14,37 +16,47 @@ public class ProductsApiClient
         _config = config;
     }
 
-    // Simula obtener precio de producto
-    // Más adelante puede conectarse al Products.API real
-    public async Task<decimal> GetProductPrice(Guid productoId)
+    // Obtiene un producto real desde Products.API
+    public async Task<ProductInfo?> GetProductAsync(Guid productoId)
     {
-        var baseUrl = _config["Services:ProductsApi"];
+        // URL base definida en appsettings.json
+        var baseUrl =
+            _config["Services:ProductsApi"]
+            ?? "http://localhost:5290";
 
         var response = await _httpClient.GetAsync(
             $"{baseUrl}/api/products/{productoId}");
 
-        // Si Products.API no está levantado,
-        // devolvemos un precio dummy temporal
-        if (!response.IsSuccessStatusCode)
+        // Si el producto no existe devolvemos null
+        if (response.StatusCode ==
+            System.Net.HttpStatusCode.NotFound)
         {
-            return 1000;
+            return null;
         }
 
-        // Por ahora dejamos un valor fijo simple
-        return 1000;
+        // Si hubo otro error HTTP lanzamos excepción
+        response.EnsureSuccessStatusCode();
+
+        // Convertimos el JSON del Products.API a ProductInfo
+        var json = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<ProductInfo>(
+            json,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
     }
+}
 
-    // Simula validar stock disponible
-    public async Task<bool> HasStock(
-        Guid productoId,
-        int cantidad)
-    {
-        var baseUrl = _config["Services:ProductsApi"];
+// Modelo auxiliar para leer la respuesta del Products.API
+public class ProductInfo
+{
+    public Guid Id { get; set; }
 
-        var response = await _httpClient.GetAsync(
-            $"{baseUrl}/api/products/{productoId}");
+    public string Nombre { get; set; } = "";
 
-        // Temporalmente asumimos que hay stock
-        return response.IsSuccessStatusCode || true;
-    }
+    public decimal Precio { get; set; }
+
+    public int Stock { get; set; }
 }

@@ -47,15 +47,15 @@ public class OrderService
     public async Task<OrderResponse> Create(
         CreateOrderRequest request)
     {
-        // Validamos que exista el usuario
+        // Validamos que exista el usuario en Users.API
         var userExists =
             await _usersApiClient.UserExists(request.UsuarioId);
 
         if (!userExists)
         {
-            throw new BusinessRuleException(
-                "ORD-002",
-                "El usuario no existe.");
+            throw new NotFoundException(
+                "ORD-003",
+                $"El usuario '{request.UsuarioId}' no fue encontrado.");
         }
 
         var items = new List<OrderItem>();
@@ -65,34 +65,37 @@ public class OrderService
         // Recorremos todos los productos de la orden
         foreach (var item in request.Items)
         {
-            // Validamos stock
-            var hasStock =
-                await _productsApiClient.HasStock(
-                    item.ProductoId,
-                    item.Cantidad);
+            // Buscamos el producto real en Products.API
+            var producto =
+                await _productsApiClient.GetProductAsync(item.ProductoId);
 
-            if (!hasStock)
+            if (producto == null)
+            {
+                throw new NotFoundException(
+                    "ORD-004",
+                    $"El producto '{item.ProductoId}' no fue encontrado.");
+            }
+
+            // Validamos stock real
+            if (producto.Stock < item.Cantidad)
             {
                 throw new BusinessRuleException(
                     "ORD-005",
-                    $"No hay stock disponible para el producto '{item.ProductoId}'.");
+                    $"Stock insuficiente para '{producto.Nombre}'. Disponible: {producto.Stock}, solicitado: {item.Cantidad}.");
             }
-
-            // Obtenemos precio del producto
-            var precio =
-                await _productsApiClient.GetProductPrice(
-                    item.ProductoId);
 
             var orderItem = new OrderItem
             {
                 ProductoId = item.ProductoId,
                 Cantidad = item.Cantidad,
-                PrecioUnitario = precio
+
+                // Usamos el precio real devuelto por Products.API
+                PrecioUnitario = producto.Precio
             };
 
             items.Add(orderItem);
 
-            total += precio * item.Cantidad;
+            total += producto.Precio * item.Cantidad;
         }
 
         // Creamos la orden
