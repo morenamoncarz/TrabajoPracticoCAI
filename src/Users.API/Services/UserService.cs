@@ -40,10 +40,7 @@ public class UserService
             PasswordHash = HashPassword(request.Password),
 
             FechaRegistro = DateTime.UtcNow,
-
-            // En el modelo de C# Activo es bool
             Activo = true,
-
             IntentosFallidos = 0
         };
 
@@ -106,6 +103,22 @@ public class UserService
         user.IntentosFallidos = 0;
 
         _repository.Update(user);
+
+        return MapToResponse(user);
+    }
+
+    public UserResponse GetById(Guid id)
+    {
+        // Buscamos el usuario por id para que otros microservicios puedan validarlo
+        var user = _repository.GetById(id);
+
+        if (user == null)
+        {
+            throw new NotFoundException(
+                "USR-007",
+                $"No existe el usuario '{id}'."
+            );
+        }
 
         return MapToResponse(user);
     }

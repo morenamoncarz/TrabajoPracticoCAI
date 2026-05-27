@@ -41,22 +41,32 @@ public class UserRepositoryDb : IUserRepository
             WHERE email = @Email
         """, new { Email = email });
 
-        if (row == null)
-        {
-            return null;
-        }
+        return MapToUser(row);
+    }
 
-        return new User
+    public User? GetById(Guid id)
+    {
+        using var connection = CreateConnection();
+
+        // Buscamos el usuario por id para que otros microservicios puedan validarlo
+        var row = connection.QueryFirstOrDefault<UserDbRow>("""
+            SELECT
+                id AS IdText,
+                nombre AS NombreText,
+                apellido AS ApellidoText,
+                email AS EmailText,
+                password_hash AS PasswordHashText,
+                fecha_registro AS FechaRegistroText,
+                activo AS ActivoNumber,
+                intentos_fallidos AS IntentosFallidosNumber
+            FROM users
+            WHERE id = @Id
+        """, new
         {
-            Id = Guid.Parse(row.IdText),
-            Nombre = row.NombreText,
-            Apellido = row.ApellidoText,
-            Email = row.EmailText,
-            PasswordHash = row.PasswordHashText,
-            FechaRegistro = DateTime.Parse(row.FechaRegistroText),
-            Activo = row.ActivoNumber == 1,
-            IntentosFallidos = row.IntentosFallidosNumber
-        };
+            Id = id.ToString()
+        });
+
+        return MapToUser(row);
     }
 
     public void Add(User user)
@@ -125,6 +135,28 @@ public class UserRepositoryDb : IUserRepository
             Activo = user.Activo ? 1 : 0,
             user.IntentosFallidos
         });
+    }
+
+    private User? MapToUser(UserDbRow? row)
+    {
+        // Si no hay datos, devolvemos null
+        if (row == null)
+        {
+            return null;
+        }
+
+        // Convertimos desde los datos de SQLite al modelo User
+        return new User
+        {
+            Id = Guid.Parse(row.IdText),
+            Nombre = row.NombreText,
+            Apellido = row.ApellidoText,
+            Email = row.EmailText,
+            PasswordHash = row.PasswordHashText,
+            FechaRegistro = DateTime.Parse(row.FechaRegistroText),
+            Activo = row.ActivoNumber == 1,
+            IntentosFallidos = row.IntentosFallidosNumber
+        };
     }
 
     private class UserDbRow

@@ -48,4 +48,19 @@ public class UsersController : ControllerBase
 
         return Ok(user);
     }
+
+    /// <summary>
+    /// Busca un usuario por id.
+    /// </summary>
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<UserResponse> GetById(Guid id)
+    {
+        // Este endpoint permite que otros microservicios validen usuarios existentes, se agregó debido a que en Orders hay que validar el usuario
+        var user = _service.GetById(id);
+
+        return Ok(user);
+    }
 }

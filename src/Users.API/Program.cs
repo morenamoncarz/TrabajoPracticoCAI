@@ -52,6 +52,7 @@ builder.Services.AddScoped<IUserRepository, UserRepositoryDb>();
 builder.Services.AddScoped<UserService>();
 
 // Manejo global de errores
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
 builder.Services.AddExceptionHandler<BusinessRuleExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
