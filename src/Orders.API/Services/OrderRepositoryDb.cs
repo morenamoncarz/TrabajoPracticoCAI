@@ -31,11 +31,11 @@ public class OrderRepositoryDb : IOrderRepository
 
         var orders = connection.Query<OrderDbRow>("""
             SELECT
-                id,
-                usuario_id,
-                total,
-                estado,
-                fecha_creacion
+                id AS Id,
+                usuario_id AS UsuarioId,
+                total AS Total,
+                estado AS Estado,
+                fecha_creacion AS FechaCreacion
             FROM orders
         """).ToList();
 
@@ -62,11 +62,11 @@ public class OrderRepositoryDb : IOrderRepository
 
         var row = connection.QueryFirstOrDefault<OrderDbRow>("""
             SELECT
-                id,
-                usuario_id,
-                total,
-                estado,
-                fecha_creacion
+                id AS Id,
+                usuario_id AS UsuarioId,
+                total AS Total,
+                estado AS Estado,
+                fecha_creacion AS FechaCreacion
             FROM orders
             WHERE id = @Id
         """, new
@@ -162,9 +162,9 @@ public class OrderRepositoryDb : IOrderRepository
         // Buscamos los items de la orden
         var items = connection.Query<OrderItemDbRow>("""
             SELECT
-                producto_id,
-                cantidad,
-                precio_unitario
+                producto_id AS ProductoId,
+                cantidad AS Cantidad,
+                precio_unitario AS PrecioUnitario
             FROM order_items
             WHERE order_id = @OrderId
         """, new
