@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Orders.API.ExceptionHandlers;
 using Orders.API.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
