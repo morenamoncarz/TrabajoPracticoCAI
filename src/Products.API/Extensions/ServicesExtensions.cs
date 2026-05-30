@@ -23,6 +23,12 @@ public static class ServicesExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
 
+        // cliente para consultar orders al borrar un producto
+        services.AddHttpContextAccessor();
+        services.AddTransient<CorrelationIdPropagationHandler>();
+        services.AddHttpClient<OrdersApiClient>()
+            .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
         services.AddExceptionHandler<NotFoundExceptionHandler>();
         services.AddExceptionHandler<BusinessRuleExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -30,7 +36,7 @@ public static class ServicesExtensions
 
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
-            .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api" });
+            .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api", "live" });
 
         services.AddHealthChecksUI(setup =>
         {

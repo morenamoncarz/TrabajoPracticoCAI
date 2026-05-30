@@ -6,10 +6,12 @@ namespace Products.API.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _repo;
+    private readonly OrdersApiClient _ordersApiClient;
 
-    public ProductService(IProductRepository repo)
+    public ProductService(IProductRepository repo, OrdersApiClient ordersApiClient)
     {
         _repo = repo;
+        _ordersApiClient = ordersApiClient;
     }
 
     public async Task<IEnumerable<Product>> GetAllAsync(string? categoria = null, string? nombre = null)
@@ -54,10 +56,20 @@ public class ProductService : IProductService
 
     public async Task DeleteAsync(Guid id)
     {
-        var borrado = await _repo.DeleteAsync(id);
-        if (!borrado)
+        var producto = await _repo.GetByIdAsync(id);
+        if (producto == null)
         {
             throw new NotFoundException("PRD-001", "Producto no encontrado.");
         }
+
+        // no lo dejo borrar si esta en alguna orden activa
+        if (await _ordersApiClient.ProductoTieneOrdenesActivas(id))
+        {
+            throw new BusinessRuleException(
+                "PRD-004",
+                "El producto tiene ordenes activas y no puede eliminarse.");
+        }
+
+        await _repo.DeleteAsync(id);
     }
 }
