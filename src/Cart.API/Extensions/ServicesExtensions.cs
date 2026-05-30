@@ -43,7 +43,7 @@ public static class ServicesExtensions
 
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
-            .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api" });
+            .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api", "live" });
 
         services.AddHealthChecksUI(setup =>
         {
