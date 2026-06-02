@@ -33,6 +33,12 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
+// cliente http hacia users api para validar ntf-001
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<CorrelationIdPropagationHandler>();
+builder.Services.AddHttpClient<UsersApiClient>()
+    .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
 builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
