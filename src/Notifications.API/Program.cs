@@ -45,7 +45,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "ready" });
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "ready", "live" });
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -126,7 +126,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
-    Predicate = _ => false,
+    Predicate = check => check.Tags.Contains("live"),
     ResponseWriter = EscribirHealthCheck
 });
 
