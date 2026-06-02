@@ -10,6 +10,17 @@ public class OrderService
     private readonly UsersApiClient _usersApiClient;
     private readonly ProductsApiClient _productsApiClient;
 
+    // Transiciones de estado permitidas
+    // clave = estado actual, valor = estados a los que puede pasar
+    private static readonly Dictionary<string, string[]> TransicionesValidas = new()
+    {
+        ["Pendiente"] = new[] { "Confirmada", "Cancelada" },
+        ["Confirmada"] = new[] { "Enviada", "Cancelada" },
+        ["Enviada"] = new[] { "Entregada" },
+        ["Entregada"] = Array.Empty<string>(),
+        ["Cancelada"] = Array.Empty<string>()
+    };
+
     public OrderService(
         IOrderRepository repository,
         UsersApiClient usersApiClient,
@@ -128,12 +139,18 @@ public class OrderService
                 $"No existe la orden '{id}'.");
         }
 
-        // Validamos transición de estados simple
-        if (order.Estado == "Cancelada")
+        // Buscamos qué estados están permitidos desde el estado actual
+        var estadosPermitidos =
+            TransicionesValidas.GetValueOrDefault(
+                order.Estado,
+                Array.Empty<string>());
+
+        // Si el nuevo estado no está permitido, devolvemos ORD-006
+        if (!estadosPermitidos.Contains(request.Estado))
         {
             throw new BusinessRuleException(
                 "ORD-006",
-                "No se puede modificar una orden cancelada.");
+                $"Una orden en estado '{order.Estado}' no puede pasar a '{request.Estado}'.");
         }
 
         _repository.UpdateStatus(id, request.Estado);
