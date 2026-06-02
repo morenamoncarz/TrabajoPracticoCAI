@@ -20,7 +20,7 @@ public static class EndpointsExtensions
         });
         app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
-            Predicate = _ => false,
+            Predicate = check => check.Tags.Contains("live"),
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
 

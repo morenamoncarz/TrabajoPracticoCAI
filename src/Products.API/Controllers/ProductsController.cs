@@ -117,10 +117,20 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>Elimina un producto.</summary>
-    /// <remarks>Devuelve 204 sin body si el producto existia. Devuelve 404 con PRD-001 si no existe.</remarks>
+    /// <remarks>
+    /// Devuelve 204 sin body si el producto existia. Devuelve 404 con PRD-001 si no existe.
+    ///
+    /// Respuesta 409 Conflict (PRD-004) si el producto tiene ordenes activas:
+    ///
+    ///     {
+    ///       "errorCode": "PRD-004",
+    ///       "errorMessage": "El producto tiene ordenes activas y no puede eliminarse."
+    ///     }
+    /// </remarks>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
