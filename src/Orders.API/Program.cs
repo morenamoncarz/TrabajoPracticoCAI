@@ -40,9 +40,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
-// Swagger
+// Swagger con XML comments
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var xmlFile =
+        $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
+    var xmlPath =
+        Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    c.IncludeXmlComments(xmlPath);
+});
 
 // Base de datos SQLite + Dapper
 builder.Services.AddSingleton<DatabaseInitializer>();
@@ -51,9 +60,16 @@ builder.Services.AddScoped<IOrderRepository, OrderRepositoryDb>();
 // Servicios
 builder.Services.AddScoped<OrderService>();
 
-// Clientes HTTP
-builder.Services.AddHttpClient<UsersApiClient>();
-builder.Services.AddHttpClient<ProductsApiClient>();
+// Necesario para leer el request actual y propagar X-Correlation-Id
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<CorrelationIdPropagationHandler>();
+
+// Clientes HTTP hacia otros microservicios
+builder.Services.AddHttpClient<UsersApiClient>()
+    .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
+builder.Services.AddHttpClient<ProductsApiClient>()
+    .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
 // Exception handlers
 builder.Services.AddExceptionHandler<BusinessRuleExceptionHandler>();

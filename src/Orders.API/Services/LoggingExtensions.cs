@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 namespace Orders.API.Services;
 
@@ -23,9 +24,10 @@ public static class LoggingExtensions
                 restrictedToMinimumLevel: LogEventLevel.Error
             )
 
-            // Archivo: guardamos logs de la API
+            // Archivo: guardamos logs de la API en formato JSON
             .WriteTo.File(
-                path: "logs/orders-api-.txt",
+                new CompactJsonFormatter(),
+                path: "logs/orders-api-.log",
                 rollingInterval: RollingInterval.Day,
                 restrictedToMinimumLevel: LogEventLevel.Information
             )
