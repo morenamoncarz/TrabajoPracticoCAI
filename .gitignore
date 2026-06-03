@@ -367,3 +367,16 @@ FodyWeavers.xsd
 
 # enunciado del TP (queda solo en local)
 2026_TP Microservicios eCommerce v6.pdf
+.tp.txt
+
+# bases de datos sqlite (se generan al arrancar la api)
+*.db
+*.db-shm
+*.db-wal
+
+# explicaciones para la defensa (uso personal, no van al repo)
+docs/products-api-explicacion.md
+docs/cart-api-explicacion.md
+
+# scaffolding interno de planificacion (no entrega)
+gan-harness/

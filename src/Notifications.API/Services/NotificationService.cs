@@ -1,16 +1,21 @@
 using Notifications.API.DTOs;
 using Notifications.API.Exceptions;
 using Notifications.API.Models;
+using Notifications.API.Repositories;
 
 namespace Notifications.API.Services;
 
 public class NotificationService : INotificationService
 {
     private readonly INotificationRepository _repo;
+    private readonly UsersApiClient _usersApiClient;
 
-    public NotificationService(INotificationRepository repo)
+    public NotificationService(
+        INotificationRepository repo,
+        UsersApiClient usersApiClient)
     {
         _repo = repo;
+        _usersApiClient = usersApiClient;
     }
 
     public async Task<Notification> SendAsync(SendNotificationRequest request)
@@ -22,6 +27,17 @@ public class NotificationService : INotificationService
             throw new ValidationException(
                 "NTF-002",
                 "El tipo de notificacion es invalido."
+            );
+        }
+
+        // ntf-001: el usuario tiene que existir en users api
+        var existeUsuario = await _usersApiClient.UserExists(request.UsuarioId);
+
+        if (!existeUsuario)
+        {
+            throw new NotFoundException(
+                "NTF-001",
+                "El usuario destinatario no fue encontrado."
             );
         }
 

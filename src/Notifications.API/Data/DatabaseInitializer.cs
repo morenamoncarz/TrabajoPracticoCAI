@@ -8,6 +8,10 @@ public class DatabaseInitializer(IConfiguration config)
 {
     public void Initialize()
     {
+        SqlMapper.RemoveTypeMap(typeof(Guid));
+        SqlMapper.RemoveTypeMap(typeof(Guid?));
+        SqlMapper.AddTypeHandler(new GuidTypeHandler());
+
         var connectionString =
             config.GetConnectionString("DefaultConnection")
             ?? "Data Source=notifications.db";

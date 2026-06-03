@@ -1,10 +1,10 @@
-Ôªø# Trabajo Pr√°ctico CAI ‚Äî Sistema eCommerce
+# Trabajo Pr·ctico CAI ó Sistema eCommerce
 
-## Descripci√≥n general
+## DescripciÛn general
 
 Este proyecto implementa un sistema eCommerce basado en una arquitectura de microservicios utilizando .NET 8 Web API.
 
-El sistema est√° dividido en cinco microservicios principales:
+El sistema est· dividido en cinco microservicios principales:
 
 - Users.API
 - Products.API
@@ -18,18 +18,18 @@ Cada microservicio tiene responsabilidades propias, su propia base de datos SQLi
 
 ## Arquitectura
 
-El sistema utiliza una arquitectura basada en microservicios y separaci√≥n por capas.
+El sistema utiliza una arquitectura basada en microservicios y separaciÛn por capas.
 
 Cada API se organiza principalmente en:
 
 - Controllers: reciben las solicitudes HTTP.
-- Services: contienen la l√≥gica de negocio.
+- Services: contienen la lÛgica de negocio.
 - Repositories: acceden a la base de datos.
 - Models / DTOs: representan los datos del sistema.
 - ExceptionHandlers: manejan errores personalizados.
 - Middleware: agrega funcionalidades transversales como Correlation ID.
 
-Cada microservicio posee su propia base de datos SQLite, siguiendo el patr√≥n database per service.
+Cada microservicio posee su propia base de datos SQLite, siguiendo el patrÛn database per service.
 
 ---
 
@@ -37,7 +37,7 @@ Cada microservicio posee su propia base de datos SQLite, siguiendo el patr√≥n da
 
 ### Users.API
 
-Responsable de la gesti√≥n de usuarios.
+Responsable de la gestiÛn de usuarios.
 
 Endpoints principales:
 
@@ -53,7 +53,7 @@ Base de datos:
 
 ### Products.API
 
-Responsable de la gesti√≥n de productos.
+Responsable de la gestiÛn de productos.
 
 Endpoints principales:
 
@@ -71,7 +71,7 @@ Base de datos:
 
 ### Cart.API
 
-Responsable de la gesti√≥n del carrito de compras.
+Responsable de la gestiÛn del carrito de compras.
 
 Endpoints principales:
 
@@ -84,7 +84,7 @@ Base de datos:
 
 - cart.db
 
-Comunicaci√≥n externa:
+ComunicaciÛn externa:
 
 - Consulta Products.API para validar productos.
 
@@ -92,12 +92,12 @@ Comunicaci√≥n externa:
 
 ### Orders.API
 
-Responsable de la gesti√≥n de √≥rdenes de compra.
+Responsable de la gestiÛn de Ûrdenes de compra.
 
 Endpoints principales:
 
 - Crear orden.
-- Listar √≥rdenes.
+- Listar Ûrdenes.
 - Obtener orden por ID.
 - Actualizar estado de una orden.
 
@@ -105,7 +105,7 @@ Base de datos:
 
 - orders.db
 
-Comunicaci√≥n externa:
+ComunicaciÛn externa:
 
 - Consulta Users.API para validar usuarios.
 - Consulta Products.API para validar productos y stock.
@@ -114,18 +114,18 @@ Comunicaci√≥n externa:
 
 ### Notifications.API
 
-Responsable de la gesti√≥n y env√≠o simulado de notificaciones.
+Responsable de la gestiÛn y envÌo simulado de notificaciones.
 
 Endpoints principales:
 
-- Enviar notificaci√≥n.
+- Enviar notificaciÛn.
 - Consultar notificaciones por usuario.
 
 Base de datos:
 
 - notifications.db
 
-Comunicaci√≥n externa:
+ComunicaciÛn externa:
 
 - Consulta Users.API para validar que el usuario destinatario exista.
 
@@ -143,9 +143,9 @@ Comunicaci√≥n externa:
 
 ---
 
-## Ejecuci√≥n del proyecto
+## EjecuciÛn del proyecto
 
-Para ejecutar cada microservicio, abrir una terminal en la ra√≠z del repositorio y correr:
+Para ejecutar cada microservicio, abrir una terminal en la raÌz del repositorio y correr:
 
 ```bash
 dotnet run --project src/Users.API
@@ -167,7 +167,7 @@ dotnet run --project src/Orders.API
 dotnet run --project src/Notifications.API
 ```
 
-Cada API debe quedar ejecut√°ndose en una terminal independiente.
+Cada API debe quedar ejecut·ndose en una terminal independiente.
 
 ---
 
@@ -197,7 +197,7 @@ Ejemplos:
 - http://localhost:5074/health
 - http://localhost:5026/health
 
-Tambi√©n se utiliza:
+TambiÈn se utiliza:
 
 ```text
 /health/live
@@ -211,7 +211,7 @@ para verificar que el servicio se encuentre vivo.
 
 El proyecto utiliza SQLite como motor de base de datos y Dapper para el acceso a datos.
 
-Cada microservicio crea autom√°ticamente su base de datos al iniciar mediante un `DatabaseInitializer`.
+Cada microservicio crea autom·ticamente su base de datos al iniciar mediante un `DatabaseInitializer`.
 
 Las bases de datos no se suben al repositorio ya que se generan localmente.
 
@@ -229,7 +229,7 @@ Archivos generados:
 
 El sistema implementa logging mediante Serilog en distintos microservicios del proyecto.
 
-Los microservicios se comunican entre s√≠ mediante llamadas HTTP utilizando distintos puertos locales.
+Los microservicios se comunican entre sÌ mediante llamadas HTTP utilizando distintos puertos locales.
 
 Header utilizado:
 ```text
@@ -239,7 +239,7 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 
 ---
 
-## Comunicaci√≥n entre microservicios
+## ComunicaciÛn entre microservicios
 
 | API origen | API destino | Motivo |
 |---|---|---|
@@ -247,23 +247,23 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 | Orders.API | Users.API | Validar usuarios |
 | Orders.API | Products.API | Validar precio y stock |
 | Notifications.API | Users.API | Validar usuario destinatario |
-| Products.API | Orders.API | Validar √≥rdenes activas antes de eliminar productos |
+| Products.API | Orders.API | Validar Ûrdenes activas antes de eliminar productos |
 
 ---
 
-## C√≥digos de error
+## CÛdigos de error
 
-El sistema utiliza c√≥digos de error personalizados para representar errores funcionales y reglas de negocio.
+El sistema utiliza cÛdigos de error personalizados para representar errores funcionales y reglas de negocio.
 
 
 ---
 
-## Documentaci√≥n entregable
+## DocumentaciÛn entregable
 
 La entrega incluye:
 
-- C√≥digo fuente completo.
-- README.md con instrucciones de ejecuci√≥n.
+- CÛdigo fuente completo.
+- README.md con instrucciones de ejecuciÛn.
 - Diagrama de arquitectura.
 - Capturas de Swagger UI mostrando respuestas exitosas y errores con `errorCode` y `errorMessage`.
 
