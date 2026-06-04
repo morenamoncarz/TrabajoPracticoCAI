@@ -7,8 +7,10 @@ public static class ApiClient
 {
     private static readonly HttpClient _http = new HttpClient();
 
-    // ojo: por ahora sin PropertyNameCaseInsensitive
-    private static readonly JsonSerializerOptions _opciones = new JsonSerializerOptions();
+    private static readonly JsonSerializerOptions _opciones = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public static async Task<T?> Get<T>(string url)
     {
