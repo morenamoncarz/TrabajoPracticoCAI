@@ -1,4 +1,5 @@
 using Cliente.Consola;
+using Cliente.Consola.Menus;
 
 while (true)
 {
@@ -24,7 +25,7 @@ while (true)
     switch (opcion)
     {
         case "1": Console.WriteLine("en construccion"); break;
-        case "2": Console.WriteLine("en construccion"); break;
+        case "2": await ProductosMenu.Mostrar(); break;
         case "3": Console.WriteLine("en construccion"); break;
         case "4": Console.WriteLine("en construccion"); break;
         case "5": Console.WriteLine("en construccion"); break;
