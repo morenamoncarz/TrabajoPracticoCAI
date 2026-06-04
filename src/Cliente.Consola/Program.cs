@@ -28,7 +28,7 @@ while (true)
         case "2": await ProductosMenu.Mostrar(); break;
         case "3": await CarritoMenu.Mostrar(); break;
         case "4": await OrdenesMenu.Mostrar(); break;
-        case "5": Console.WriteLine("en construccion"); break;
+        case "5": await NotificacionesMenu.Mostrar(); break;
         case "0": return;
         default: Console.WriteLine("opcion invalida"); break;
     }
