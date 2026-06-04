@@ -24,9 +24,9 @@ while (true)
 
     switch (opcion)
     {
-        case "1": Console.WriteLine("en construccion"); break;
+        case "1": await UsuariosMenu.Mostrar(); break;
         case "2": await ProductosMenu.Mostrar(); break;
-        case "3": Console.WriteLine("en construccion"); break;
+        case "3": await CarritoMenu.Mostrar(); break;
         case "4": Console.WriteLine("en construccion"); break;
         case "5": Console.WriteLine("en construccion"); break;
         case "0": return;
