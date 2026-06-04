@@ -38,3 +38,26 @@ Las bases sqlite (`products.db`, `cart.db`) se crean automaticamente al arrancar
 ## Logs
 
 Cada servicio escribe en `logs/<servicio>-<fecha>.log` en formato JSON compact (Serilog). Cada request lleva un `X-Correlation-Id` que se propaga en las llamadas HTTP entre servicios.
+
+## Cliente de consola
+
+Hay un cliente de consola (`src/Cliente.Consola`) para probar las APIs sin Swagger.
+
+Para usarlo, primero levantar las 5 APIs (cada una en su consola):
+
+| API | comando | puerto |
+|-----|---------|--------|
+| Users | `dotnet run --project src/Users.API/Users.API.csproj` | 5029 |
+| Products | `dotnet run --project src/Products.API/Products.API.csproj` | 5290 |
+| Cart | `dotnet run --project src/Cart.API/Cart.API.csproj` | 5277 |
+| Orders | `dotnet run --project src/Orders.API/Orders.API.csproj` | 5074 |
+| Notifications | `dotnet run --project src/Notifications.API/Notifications.API.csproj` | 5026 |
+
+Y despues correr el cliente:
+
+```
+dotnet run --project src/Cliente.Consola/Cliente.Consola.csproj
+```
+
+Se navega con numeros. Conviene arrancar registrandote en el menu de usuarios
+para quedar logueado y poder usar carrito, ordenes y notificaciones.
