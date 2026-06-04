@@ -34,8 +34,7 @@ public static class NotificacionesMenu
         Console.Write("mensaje: "); var mensaje = Console.ReadLine();
         Console.Write("tipo (Email/Push/SMS): "); var tipo = Console.ReadLine();
 
-        // lo paso a minuscula por las dudas
-        var body = new { usuarioId = Sesion.UsuarioActualId, mensaje, tipo = (tipo ?? "").ToLower() };
+        var body = new { usuarioId = Sesion.UsuarioActualId, mensaje, tipo };
         var notif = await ApiClient.Post<NotificacionDto>($"{ApiUrls.Notifications}/api/notifications/send", body);
         if (notif != null) Console.WriteLine("notificacion enviada");
     }
