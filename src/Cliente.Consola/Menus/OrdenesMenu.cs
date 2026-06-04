@@ -76,8 +76,8 @@ public static class OrdenesMenu
         Console.Write("nuevo estado (Confirmada/Enviada/Entregada/Cancelada): ");
         var estado = Console.ReadLine();
 
-        // mando el estado pegado en la url
-        var orden = await ApiClient.Put<OrdenDto>($"{ApiUrls.Orders}/api/orders/{id}/status?estado={estado}", new { });
+        var body = new { estado };
+        var orden = await ApiClient.Put<OrdenDto>($"{ApiUrls.Orders}/api/orders/{id}/status", body);
         if (orden != null) Console.WriteLine($"estado cambiado a {orden.Estado}");
     }
 }
