@@ -138,7 +138,7 @@ Comunicaci�n externa:
 | Users.API | 5029 |
 | Orders.API | 5074 |
 | Notifications.API | 5026 |
-| Cart.API | 5200 |
+| Cart.API | 5277 |
 | Products.API | 5290 |
 
 ---
@@ -179,7 +179,7 @@ URLs:
 
 - Users.API: http://localhost:5029/swagger
 - Products.API: http://localhost:5290/swagger
-- Cart.API: http://localhost:5200/swagger
+- Cart.API: http://localhost:5277/swagger
 - Orders.API: http://localhost:5074/swagger
 - Notifications.API: http://localhost:5026/swagger
 
@@ -193,7 +193,7 @@ Ejemplos:
 
 - http://localhost:5029/health
 - http://localhost:5290/health
-- http://localhost:5200/health
+- http://localhost:5277/health
 - http://localhost:5074/health
 - http://localhost:5026/health
 
