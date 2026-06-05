@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cart.API", "src\Cart.API\Ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.API", "src\Notifications.API\Notifications.API.csproj", "{2B57C8E3-56CD-4CDE-9F1B-6AB9FA315725}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2FC356AC-AF70-4660-9768-FB4B77C3DBA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cliente.Consola", "src\Cliente.Consola\Cliente.Consola.csproj", "{F6791C6D-C776-4A3D-A6DE-EC45E286520F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,11 +43,18 @@ Global
 		{2B57C8E3-56CD-4CDE-9F1B-6AB9FA315725}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B57C8E3-56CD-4CDE-9F1B-6AB9FA315725}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B57C8E3-56CD-4CDE-9F1B-6AB9FA315725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6791C6D-C776-4A3D-A6DE-EC45E286520F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6791C6D-C776-4A3D-A6DE-EC45E286520F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6791C6D-C776-4A3D-A6DE-EC45E286520F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6791C6D-C776-4A3D-A6DE-EC45E286520F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {943F81B6-C064-4E86-9442-512A2F25B833}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F6791C6D-C776-4A3D-A6DE-EC45E286520F} = {2FC356AC-AF70-4660-9768-FB4B77C3DBA8}
 	EndGlobalSection
 EndGlobal

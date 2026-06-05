@@ -1,10 +1,10 @@
-# Trabajo Práctico CAI — Sistema eCommerce
+# Trabajo Prï¿½ctico CAI ï¿½ Sistema eCommerce
 
-## Descripción general
+## Descripciï¿½n general
 
 Este proyecto implementa un sistema eCommerce basado en una arquitectura de microservicios utilizando .NET 8 Web API.
 
-El sistema está dividido en cinco microservicios principales:
+El sistema estï¿½ dividido en cinco microservicios principales:
 
 - Users.API
 - Products.API
@@ -18,18 +18,18 @@ Cada microservicio tiene responsabilidades propias, su propia base de datos SQLi
 
 ## Arquitectura
 
-El sistema utiliza una arquitectura basada en microservicios y separación por capas.
+El sistema utiliza una arquitectura basada en microservicios y separaciï¿½n por capas.
 
 Cada API se organiza principalmente en:
 
 - Controllers: reciben las solicitudes HTTP.
-- Services: contienen la lógica de negocio.
+- Services: contienen la lï¿½gica de negocio.
 - Repositories: acceden a la base de datos.
 - Models / DTOs: representan los datos del sistema.
 - ExceptionHandlers: manejan errores personalizados.
 - Middleware: agrega funcionalidades transversales como Correlation ID.
 
-Cada microservicio posee su propia base de datos SQLite, siguiendo el patrón database per service.
+Cada microservicio posee su propia base de datos SQLite, siguiendo el patrï¿½n database per service.
 
 ---
 
@@ -37,7 +37,7 @@ Cada microservicio posee su propia base de datos SQLite, siguiendo el patrón dat
 
 ### Users.API
 
-Responsable de la gestión de usuarios.
+Responsable de la gestiï¿½n de usuarios.
 
 Endpoints principales:
 
@@ -53,7 +53,7 @@ Base de datos:
 
 ### Products.API
 
-Responsable de la gestión de productos.
+Responsable de la gestiï¿½n de productos.
 
 Endpoints principales:
 
@@ -71,7 +71,7 @@ Base de datos:
 
 ### Cart.API
 
-Responsable de la gestión del carrito de compras.
+Responsable de la gestiï¿½n del carrito de compras.
 
 Endpoints principales:
 
@@ -84,7 +84,7 @@ Base de datos:
 
 - cart.db
 
-Comunicación externa:
+Comunicaciï¿½n externa:
 
 - Consulta Products.API para validar productos.
 
@@ -92,12 +92,12 @@ Comunicación externa:
 
 ### Orders.API
 
-Responsable de la gestión de órdenes de compra.
+Responsable de la gestiï¿½n de ï¿½rdenes de compra.
 
 Endpoints principales:
 
 - Crear orden.
-- Listar órdenes.
+- Listar ï¿½rdenes.
 - Obtener orden por ID.
 - Actualizar estado de una orden.
 
@@ -105,7 +105,7 @@ Base de datos:
 
 - orders.db
 
-Comunicación externa:
+Comunicaciï¿½n externa:
 
 - Consulta Users.API para validar usuarios.
 - Consulta Products.API para validar productos y stock.
@@ -114,18 +114,18 @@ Comunicación externa:
 
 ### Notifications.API
 
-Responsable de la gestión y envío simulado de notificaciones.
+Responsable de la gestiï¿½n y envï¿½o simulado de notificaciones.
 
 Endpoints principales:
 
-- Enviar notificación.
+- Enviar notificaciï¿½n.
 - Consultar notificaciones por usuario.
 
 Base de datos:
 
 - notifications.db
 
-Comunicación externa:
+Comunicaciï¿½n externa:
 
 - Consulta Users.API para validar que el usuario destinatario exista.
 
@@ -143,9 +143,9 @@ Comunicación externa:
 
 ---
 
-## Ejecución del proyecto
+## Ejecuciï¿½n del proyecto
 
-Para ejecutar cada microservicio, abrir una terminal en la raíz del repositorio y correr:
+Para ejecutar cada microservicio, abrir una terminal en la raï¿½z del repositorio y correr:
 
 ```bash
 dotnet run --project src/Users.API
@@ -167,7 +167,7 @@ dotnet run --project src/Orders.API
 dotnet run --project src/Notifications.API
 ```
 
-Cada API debe quedar ejecutándose en una terminal independiente.
+Cada API debe quedar ejecutï¿½ndose en una terminal independiente.
 
 ---
 
@@ -197,7 +197,7 @@ Ejemplos:
 - http://localhost:5074/health
 - http://localhost:5026/health
 
-También se utiliza:
+Tambiï¿½n se utiliza:
 
 ```text
 /health/live
@@ -211,7 +211,7 @@ para verificar que el servicio se encuentre vivo.
 
 El proyecto utiliza SQLite como motor de base de datos y Dapper para el acceso a datos.
 
-Cada microservicio crea automáticamente su base de datos al iniciar mediante un `DatabaseInitializer`.
+Cada microservicio crea automï¿½ticamente su base de datos al iniciar mediante un `DatabaseInitializer`.
 
 Las bases de datos no se suben al repositorio ya que se generan localmente.
 
@@ -229,7 +229,7 @@ Archivos generados:
 
 El sistema implementa logging mediante Serilog en distintos microservicios del proyecto.
 
-Los microservicios se comunican entre sí mediante llamadas HTTP utilizando distintos puertos locales.
+Los microservicios se comunican entre sï¿½ mediante llamadas HTTP utilizando distintos puertos locales.
 
 Header utilizado:
 ```text
@@ -239,7 +239,7 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 
 ---
 
-## Comunicación entre microservicios
+## Comunicaciï¿½n entre microservicios
 
 | API origen | API destino | Motivo |
 |---|---|---|
@@ -247,25 +247,40 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 | Orders.API | Users.API | Validar usuarios |
 | Orders.API | Products.API | Validar precio y stock |
 | Notifications.API | Users.API | Validar usuario destinatario |
-| Products.API | Orders.API | Validar órdenes activas antes de eliminar productos |
+| Products.API | Orders.API | Validar ï¿½rdenes activas antes de eliminar productos |
 
 ---
 
-## Códigos de error
+## Cï¿½digos de error
 
-El sistema utiliza códigos de error personalizados para representar errores funcionales y reglas de negocio.
+El sistema utiliza cï¿½digos de error personalizados para representar errores funcionales y reglas de negocio.
 
 
 ---
 
-## Documentación entregable
+## Documentaciï¿½n entregable
 
 La entrega incluye:
 
-- Código fuente completo.
-- README.md con instrucciones de ejecución.
+- Cï¿½digo fuente completo.
+- README.md con instrucciones de ejecuciï¿½n.
 - Diagrama de arquitectura.
 - Capturas de Swagger UI mostrando respuestas exitosas y errores con `errorCode` y `errorMessage`.
+
+---
+
+## Cliente de consola
+
+Hay un cliente de consola (`src/Cliente.Consola`) para probar las APIs sin Swagger.
+
+Primero levantar las 5 APIs (cada una en su terminal) y despues correr:
+
+```
+dotnet run --project src/Cliente.Consola/Cliente.Consola.csproj
+```
+
+Se navega con numeros. Conviene arrancar registrandote en el menu de usuarios
+para quedar logueado y poder usar carrito, ordenes y notificaciones.
 
 ---
 
