@@ -79,6 +79,7 @@ Endpoints principales:
 - Consultar carrito.
 - Actualizar cantidades.
 - Eliminar productos del carrito.
+- Vaciar el carrito completo.
 
 Base de datos:
 
@@ -200,10 +201,13 @@ Ejemplos:
 Tambi�n se utiliza:
 
 ```text
+/health
+/health/ready
 /health/live
 ```
 
-para verificar que el servicio se encuentre vivo.
+`/health` da el estado general, `/health/ready` indica si el servicio esta listo
+para recibir pedidos y `/health/live` indica si el servicio sigue vivo.
 
 ---
 
@@ -254,6 +258,50 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 ## C�digos de error
 
 El sistema utiliza c�digos de error personalizados para representar errores funcionales y reglas de negocio.
+
+Cada error viaja en la respuesta con los campos `errorCode` y `errorMessage`.
+
+**Users (USR)**
+
+- USR-001: el email ya esta registrado.
+- USR-002: datos del usuario invalidos.
+- USR-003: credenciales incorrectas.
+- USR-004: usuario bloqueado por demasiados intentos fallidos.
+- USR-006: error interno al procesar el usuario.
+- USR-007: usuario no encontrado.
+
+**Products (PRD)**
+
+- PRD-001: producto no encontrado.
+- PRD-002: datos del producto invalidos.
+- PRD-003: ya existe un producto con ese nombre en la categoria.
+- PRD-004: no se puede eliminar un producto con ordenes activas.
+- PRD-005: error interno.
+
+**Cart (CRT)**
+
+- CRT-001: carrito o item no encontrado.
+- CRT-002: producto no encontrado.
+- CRT-003: stock insuficiente.
+- CRT-004: cantidad invalida.
+- CRT-005: error interno.
+
+**Orders (ORD)**
+
+- ORD-001: orden no encontrada.
+- ORD-002: datos de la orden invalidos.
+- ORD-003: usuario no encontrado.
+- ORD-004: producto no encontrado.
+- ORD-005: stock insuficiente.
+- ORD-006: transicion de estado no permitida.
+- ORD-007: error interno.
+
+**Notifications (NTF)**
+
+- NTF-001: usuario destinatario no encontrado.
+- NTF-002: tipo de notificacion invalido.
+- NTF-003: no se encontraron notificaciones para el usuario.
+- NTF-004: error interno.
 
 
 ---
