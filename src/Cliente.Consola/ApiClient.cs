@@ -41,7 +41,7 @@ public static class ApiClient
         }
         catch (HttpRequestException)
         {
-            Console.WriteLine("no me puedo conectar a la api, esta levantada?");
+            Console.WriteLine("No se pudo conectar con el servicio. Verifica que este disponible.");
             return false;
         }
     }
@@ -74,7 +74,7 @@ public static class ApiClient
         }
         catch (HttpRequestException)
         {
-            Console.WriteLine("no me puedo conectar a la api, esta levantada?");
+            Console.WriteLine("No se pudo conectar con el servicio. Verifica que este disponible.");
             return default;
         }
     }
@@ -87,13 +87,13 @@ public static class ApiClient
             var error = JsonSerializer.Deserialize<ErrorResponse>(json, _opciones);
             if (error != null && !string.IsNullOrEmpty(error.ErrorCode))
             {
-                Console.WriteLine($"error {error.ErrorCode}: {error.ErrorMessage}");
+                Console.WriteLine($"Error {error.ErrorCode}: {error.ErrorMessage}");
                 return;
             }
         }
         catch { }
 
-        Console.WriteLine($"hubo un error ({(int)resp.StatusCode})");
+        Console.WriteLine($"Ocurrio un error ({(int)resp.StatusCode}).");
     }
 }
 
