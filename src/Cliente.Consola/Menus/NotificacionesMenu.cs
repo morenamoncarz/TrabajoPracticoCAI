@@ -14,29 +14,17 @@ public static class NotificacionesMenu
         {
             Console.WriteLine();
             Console.WriteLine("--- NOTIFICACIONES ---");
-            Console.WriteLine("1) enviar");
-            Console.WriteLine("2) ver las mias");
-            Console.WriteLine("3) volver");
+            Console.WriteLine("1) ver las mias");
+            Console.WriteLine("2) volver");
             Console.Write("opcion: ");
 
             switch (Console.ReadLine())
             {
-                case "1": await Enviar(); break;
-                case "2": await Ver(); break;
-                case "3": return;
+                case "1": await Ver(); break;
+                case "2": return;
                 default: Console.WriteLine("opcion invalida"); break;
             }
         }
-    }
-
-    private static async Task Enviar()
-    {
-        Console.Write("mensaje: "); var mensaje = Console.ReadLine();
-        Console.Write("tipo (Email/Push/SMS): "); var tipo = Console.ReadLine();
-
-        var body = new { usuarioId = Sesion.UsuarioActualId, mensaje, tipo };
-        var notif = await ApiClient.Post<NotificacionDto>($"{ApiUrls.Notifications}/api/notifications/send", body);
-        if (notif != null) Console.WriteLine("notificacion enviada");
     }
 
     private static async Task Ver()
