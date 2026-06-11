@@ -9,6 +9,7 @@ public class OrderService
     private readonly IOrderRepository _repository;
     private readonly UsersApiClient _usersApiClient;
     private readonly ProductsApiClient _productsApiClient;
+    private readonly NotificationsApiClient _notificationsApiClient;
 
     // Transiciones de estado permitidas
     // clave = estado actual, valor = estados a los que puede pasar
@@ -24,11 +25,13 @@ public class OrderService
     public OrderService(
         IOrderRepository repository,
         UsersApiClient usersApiClient,
-        ProductsApiClient productsApiClient)
+        ProductsApiClient productsApiClient,
+        NotificationsApiClient notificationsApiClient)
     {
         _repository = repository;
         _usersApiClient = usersApiClient;
         _productsApiClient = productsApiClient;
+        _notificationsApiClient = notificationsApiClient;
     }
 
     // Devuelve todas las órdenes
@@ -122,11 +125,15 @@ public class OrderService
 
         _repository.Add(order);
 
+        await _notificationsApiClient.Notificar(
+            order.UsuarioId,
+            $"Su orden #{order.Id.ToString()[..8]} fue creada por un total de ${order.Total}.");
+
         return MapToResponse(order);
     }
 
     // Actualiza el estado de una orden
-    public UpdateOrderStatusResponse UpdateStatus(
+    public async Task<UpdateOrderStatusResponse> UpdateStatus(
         Guid id,
         UpdateOrderStatusRequest request)
     {
@@ -154,6 +161,10 @@ public class OrderService
         }
 
         _repository.UpdateStatus(id, request.Estado);
+
+        await _notificationsApiClient.Notificar(
+            order.UsuarioId,
+            $"Su orden #{id.ToString()[..8]} fue {request.Estado.ToLower()}.");
 
         return new UpdateOrderStatusResponse
         {

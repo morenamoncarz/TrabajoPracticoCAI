@@ -12,7 +12,7 @@ builder.AddAppLogging();
 // Agregamos soporte para controllers
 builder.Services.AddControllers();
 
-// Personalizamos errores de validación (ORD-002)
+// Personalizamos errores de validaciï¿½n (ORD-002)
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
@@ -24,17 +24,17 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
         var mensaje = errores.Any()
             ? string.Join("; ", errores)
-            : "Los datos de la orden son inválidos.";
+            : "Los datos de la orden son invï¿½lidos.";
 
         return new BadRequestObjectResult(new
         {
             type = "about:blank",
-            title = "Datos inválidos",
+            title = "Datos invï¿½lidos",
             status = 400,
             detail = mensaje,
             instance = context.HttpContext.Request.Path.Value,
             errorCode = "ORD-002",
-            errorMessage = "Los datos de la orden son inválidos.",
+            errorMessage = "Los datos de la orden son invï¿½lidos.",
             correlationId = context.HttpContext.Items["X-Correlation-Id"]?.ToString()
         });
     };
@@ -69,6 +69,9 @@ builder.Services.AddHttpClient<UsersApiClient>()
     .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
 builder.Services.AddHttpClient<ProductsApiClient>()
+    .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
+builder.Services.AddHttpClient<NotificationsApiClient>()
     .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
 // Exception handlers
@@ -107,7 +110,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
-// Logging automático de requests HTTP
+// Logging automï¿½tico de requests HTTP
 app.UseSerilogRequestLogging();
 
 // Health checks

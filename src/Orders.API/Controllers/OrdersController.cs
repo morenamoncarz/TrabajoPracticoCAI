@@ -69,11 +69,11 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<UpdateOrderStatusResponse> UpdateStatus(
+    public async Task<ActionResult<UpdateOrderStatusResponse>> UpdateStatus(
         Guid id,
         UpdateOrderStatusRequest request)
     {
-        var result = _service.UpdateStatus(id, request);
+        var result = await _service.UpdateStatus(id, request);
 
         return Ok(result);
     }
