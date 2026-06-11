@@ -7,11 +7,16 @@ public class NotificationsApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _config;
+    private readonly ILogger<NotificationsApiClient> _logger;
 
-    public NotificationsApiClient(HttpClient httpClient, IConfiguration config)
+    public NotificationsApiClient(
+        HttpClient httpClient,
+        IConfiguration config,
+        ILogger<NotificationsApiClient> logger)
     {
         _httpClient = httpClient;
         _config = config;
+        _logger = logger;
     }
 
     public async Task Notificar(Guid usuarioId, string mensaje)
@@ -22,9 +27,20 @@ public class NotificationsApiClient
 
         var body = new { usuarioId, mensaje, tipo = "Push" };
 
-        var response = await _httpClient.PostAsJsonAsync(
-            $"{baseUrl}/api/notifications/send", body);
+        // si notifications esta caido la orden igual tiene que andar, asi que no propago el error
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                $"{baseUrl}/api/notifications/send", body);
 
-        response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+                _logger.LogWarning(
+                    "no se pudo notificar al usuario {UsuarioId}, status {Status}",
+                    usuarioId, (int)response.StatusCode);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "fallo al notificar al usuario {UsuarioId}", usuarioId);
+        }
     }
 }
