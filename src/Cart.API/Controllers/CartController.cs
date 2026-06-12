@@ -39,6 +39,21 @@ public class CartController : ControllerBase
         return Ok(cart);
     }
 
+    /// <summary>Lista los usuarios que tienen un producto en su carrito.</summary>
+    /// <remarks>
+    /// Lo usa Products.API para avisar cambios de precio o stock a quienes
+    /// tienen el producto agregado. Devuelve 200 OK con una lista de usuarioId
+    /// (vacia si nadie lo tiene).
+    /// </remarks>
+    [HttpGet("with-product/{productId:guid}")]
+    [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetUsuariosConProducto(Guid productId)
+    {
+        var usuarios = await _service.GetUsuariosConProductoAsync(productId);
+        return Ok(usuarios);
+    }
+
     /// <summary>Agrega un producto al carrito.</summary>
     /// <remarks>
     /// Ejemplo de request body:

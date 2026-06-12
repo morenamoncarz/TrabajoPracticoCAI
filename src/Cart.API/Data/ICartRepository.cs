@@ -10,4 +10,5 @@ public interface ICartRepository
     Task<bool> ClearCartAsync(Guid usuarioId);
     Task<bool> ItemExisteAsync(Guid usuarioId, Guid productoId);
     Task<int?> GetCantidadAsync(Guid usuarioId, Guid productoId);
+    Task<List<Guid>> GetUsuariosConProductoAsync(Guid productoId);
 }

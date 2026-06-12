@@ -9,11 +9,16 @@ public class CartService : ICartService
 {
     private readonly ICartRepository _repo;
     private readonly IProductsClient _products;
+    private readonly INotificationsClient _notifications;
 
-    public CartService(ICartRepository repo, IProductsClient products)
+    public CartService(
+        ICartRepository repo,
+        IProductsClient products,
+        INotificationsClient notifications)
     {
         _repo = repo;
         _products = products;
+        _notifications = notifications;
     }
 
     public async Task<Models.Cart> GetCartAsync(Guid usuarioId)
@@ -41,6 +46,11 @@ public class CartService : ICartService
                 $"Stock insuficiente. Disponible: {producto.Stock}, solicitado: {nuevaCantidad}.");
 
         await _repo.AddOrUpdateItemAsync(usuarioId, request.ProductoId, nuevaCantidad);
+
+        await _notifications.Notificar(
+            usuarioId,
+            $"Agregaste {producto.Nombre} a tu carrito.");
+
         return (await _repo.GetByUsuarioAsync(usuarioId))!;
     }
 
@@ -82,5 +92,10 @@ public class CartService : ICartService
         var borrado = await _repo.ClearCartAsync(usuarioId);
         if (!borrado)
             throw new NotFoundException("CRT-001", "Carrito no encontrado.");
+    }
+
+    public Task<List<Guid>> GetUsuariosConProductoAsync(Guid productoId)
+    {
+        return _repo.GetUsuariosConProductoAsync(productoId);
     }
 }

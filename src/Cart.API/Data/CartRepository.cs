@@ -112,4 +112,14 @@ public class CartRepository : ICartRepository
             "SELECT cantidad FROM cart_items WHERE usuarioId = @UsuarioId AND productoId = @ProductoId",
             new { UsuarioId = usuarioId.ToString(), ProductoId = productoId.ToString() });
     }
+
+    public async Task<List<Guid>> GetUsuariosConProductoAsync(Guid productoId)
+    {
+        using var conn = CreateConnection();
+        var ids = await conn.QueryAsync<string>(
+            "SELECT DISTINCT usuarioId FROM cart_items WHERE productoId = @ProductoId",
+            new { ProductoId = productoId.ToString() });
+
+        return ids.Select(Guid.Parse).ToList();
+    }
 }
