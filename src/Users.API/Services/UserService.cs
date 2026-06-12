@@ -9,13 +9,17 @@ namespace Users.API.Services;
 public class UserService
 {
     private readonly IUserRepository _repository;
+    private readonly NotificationsApiClient _notificationsApiClient;
 
-    public UserService(IUserRepository repository)
+    public UserService(
+        IUserRepository repository,
+        NotificationsApiClient notificationsApiClient)
     {
         _repository = repository;
+        _notificationsApiClient = notificationsApiClient;
     }
 
-    public UserResponse Register(RegisterUserRequest request)
+    public async Task<UserResponse> Register(RegisterUserRequest request)
     {
         // Validamos si ya existe un usuario con ese email
         var existingUser = _repository.GetByEmail(request.Email);
@@ -45,6 +49,10 @@ public class UserService
         };
 
         _repository.Add(user);
+
+        await _notificationsApiClient.Notificar(
+            user.Id,
+            $"¡Bienvenido {user.Nombre}! Tu cuenta fue creada con éxito.");
 
         return MapToResponse(user);
     }

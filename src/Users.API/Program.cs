@@ -12,7 +12,7 @@ builder.AddAppLogging();
 // Agregamos soporte para controllers
 builder.Services.AddControllers();
 
-// Personalizamos los errores de validación para devolver USR-002
+// Personalizamos los errores de validaciï¿½n para devolver USR-002
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
@@ -24,17 +24,17 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
         var mensaje = errores.Any()
             ? string.Join("; ", errores)
-            : "Los datos del usuario son inválidos.";
+            : "Los datos del usuario son invï¿½lidos.";
 
         return new BadRequestObjectResult(new
         {
             type = "about:blank",
-            title = "Datos inválidos",
+            title = "Datos invï¿½lidos",
             status = 400,
             detail = mensaje,
             instance = context.HttpContext.Request.Path.Value,
             errorCode = "USR-002",
-            errorMessage = "Los datos del usuario son inválidos.",
+            errorMessage = "Los datos del usuario son invï¿½lidos.",
             correlationId = context.HttpContext.Items["X-Correlation-Id"]?.ToString()
         });
     };
@@ -48,8 +48,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddScoped<IUserRepository, UserRepositoryDb>();
 
-// Lógica de negocio
+// Lï¿½gica de negocio
 builder.Services.AddScoped<UserService>();
+
+// Cliente HTTP para avisarle a Notifications cuando se registra un usuario
+builder.Services.AddHttpClient<NotificationsApiClient>();
 
 // Manejo global de errores
 builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
@@ -86,7 +89,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
-// Log automático de requests HTTP
+// Log automï¿½tico de requests HTTP
 app.UseSerilogRequestLogging();
 
 // Health checks
