@@ -29,6 +29,12 @@ public static class ServicesExtensions
         services.AddHttpClient<OrdersApiClient>()
             .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
+        // clientes para avisar al carrito cuando cambia un producto
+        services.AddHttpClient<CartApiClient>()
+            .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+        services.AddHttpClient<NotificationsApiClient>()
+            .AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
         services.AddExceptionHandler<NotFoundExceptionHandler>();
         services.AddExceptionHandler<BusinessRuleExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -7,11 +7,22 @@ public class ProductService : IProductService
 {
     private readonly IProductRepository _repo;
     private readonly OrdersApiClient _ordersApiClient;
+    private readonly CartApiClient _cartApiClient;
+    private readonly NotificationsApiClient _notificationsApiClient;
+    private readonly IConfiguration _config;
 
-    public ProductService(IProductRepository repo, OrdersApiClient ordersApiClient)
+    public ProductService(
+        IProductRepository repo,
+        OrdersApiClient ordersApiClient,
+        CartApiClient cartApiClient,
+        NotificationsApiClient notificationsApiClient,
+        IConfiguration config)
     {
         _repo = repo;
         _ordersApiClient = ordersApiClient;
+        _cartApiClient = cartApiClient;
+        _notificationsApiClient = notificationsApiClient;
+        _config = config;
     }
 
     public async Task<IEnumerable<Product>> GetAllAsync(string? categoria = null, string? nombre = null)
@@ -51,7 +62,35 @@ public class ProductService : IProductService
         producto.Id = id;
         producto.FechaCreacion = existente.FechaCreacion;
         await _repo.UpdateAsync(producto);
+
+        await NotificarCambiosAlCarrito(existente, producto);
+
         return producto;
+    }
+
+    // avisa a quienes tienen el producto en el carrito si cambio el precio o se esta agotando
+    private async Task NotificarCambiosAlCarrito(Product viejo, Product nuevo)
+    {
+        var umbral = _config.GetValue<int?>("Notifications:StockBajoUmbral") ?? 5;
+
+        var mensajes = new List<string>();
+
+        if (nuevo.Precio != viejo.Precio)
+            mensajes.Add($"El producto {nuevo.Nombre} de tu carrito cambió de precio: ahora ${nuevo.Precio}.");
+
+        if (viejo.Stock > 0 && nuevo.Stock == 0)
+            mensajes.Add($"El producto {nuevo.Nombre} de tu carrito se quedó sin stock.");
+        else if (viejo.Stock > umbral && nuevo.Stock <= umbral)
+            mensajes.Add($"El producto {nuevo.Nombre} de tu carrito está por agotarse (quedan {nuevo.Stock}).");
+
+        if (mensajes.Count == 0)
+            return;
+
+        var usuarios = await _cartApiClient.GetUsuariosConProductoEnCarrito(nuevo.Id);
+
+        foreach (var usuarioId in usuarios)
+            foreach (var mensaje in mensajes)
+                await _notificationsApiClient.Notificar(usuarioId, mensaje);
     }
 
     public async Task DeleteAsync(Guid id)
