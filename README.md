@@ -49,6 +49,10 @@ Base de datos:
 
 - users.db
 
+Comunicación externa:
+
+- Avisa a Notifications.API cuando se registra un usuario (notificación de bienvenida).
+
 ---
 
 ### Products.API
@@ -67,6 +71,13 @@ Base de datos:
 
 - products.db
 
+Comunicación externa:
+
+- Consulta Orders.API para validar órdenes activas antes de eliminar un producto.
+- Consulta Cart.API para saber qué usuarios tienen el producto en su carrito.
+- Avisa a Notifications.API cuando cambia el precio o el stock de un producto, para
+  notificar a quienes lo tienen en el carrito.
+
 ---
 
 ### Cart.API
@@ -80,6 +91,7 @@ Endpoints principales:
 - Actualizar cantidades.
 - Eliminar productos del carrito.
 - Vaciar el carrito completo.
+- Consultar qué usuarios tienen un producto en su carrito (usado por Products.API).
 
 Base de datos:
 
@@ -88,6 +100,7 @@ Base de datos:
 Comunicación externa:
 
 - Consulta Products.API para validar productos.
+- Avisa a Notifications.API cuando se agrega un producto al carrito.
 
 ---
 
@@ -248,10 +261,40 @@ Este identificador permite rastrear una misma solicitud entre distintos microser
 | API origen | API destino | Motivo |
 |---|---|---|
 | Cart.API | Products.API | Validar productos |
+| Cart.API | Notifications.API | Avisar cuando se agrega un producto al carrito |
 | Orders.API | Users.API | Validar usuarios |
 | Orders.API | Products.API | Validar precio y stock |
+| Orders.API | Notifications.API | Avisar creación y cambio de estado de una orden |
 | Notifications.API | Users.API | Validar usuario destinatario |
 | Products.API | Orders.API | Validar órdenes activas antes de eliminar productos |
+| Products.API | Cart.API | Saber qué usuarios tienen el producto en el carrito |
+| Products.API | Notifications.API | Avisar cambios de precio o stock a quienes tienen el producto en el carrito |
+| Users.API | Notifications.API | Avisar el registro de un usuario nuevo |
+
+---
+
+## Notificaciones
+
+Cada microservicio genera notificaciones ante eventos relevantes. Todas se envían a
+Notifications.API (`POST /api/notifications/send`, `tipo = "Push"`) y quedan
+disponibles en el menú de notificaciones del cliente, asociadas al usuario destinatario.
+
+El envío es **fire-and-forget**: si Notifications.API está caído, la operación principal
+(registro, agregar al carrito, actualizar producto, crear orden) se completa igual y solo
+se registra un warning en el log.
+
+| Servicio | Evento | Destinatario | Mensaje |
+|---|---|---|---|
+| Users.API | Registro de usuario | el usuario nuevo | "¡Bienvenido {Nombre}! Tu cuenta fue creada con éxito." |
+| Cart.API | Agregar producto al carrito | dueño del carrito | "Agregaste {producto} a tu carrito." |
+| Products.API | Cambio de precio en un producto | usuarios que lo tienen en el carrito | "El producto {nombre} de tu carrito cambió de precio: ahora ${precio}." |
+| Products.API | El producto queda sin stock | usuarios que lo tienen en el carrito | "El producto {nombre} de tu carrito se quedó sin stock." |
+| Products.API | El stock cruza el umbral bajo (≤ 5, configurable) | usuarios que lo tienen en el carrito | "El producto {nombre} de tu carrito está por agotarse (quedan {stock})." |
+| Orders.API | Crear orden | dueño de la orden | "Su orden #XXXXXXXX fue creada por un total de $XXX." |
+| Orders.API | Cambio de estado de la orden | dueño de la orden | "Su orden #XXXXXXXX fue {estado}." |
+
+El umbral de stock bajo de Products.API se configura en `appsettings.json`
+(`Notifications:StockBajoUmbral`, default 5).
 
 ---
 
