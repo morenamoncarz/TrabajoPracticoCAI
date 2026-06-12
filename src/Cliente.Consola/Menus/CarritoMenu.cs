@@ -35,41 +35,91 @@ public static class CarritoMenu
         }
     }
 
+    // traigo los nombres del catalogo para no mostrar uuids en el carrito
+    private static async Task<Dictionary<Guid, string>> NombresDeProductos()
+    {
+        var productos = await ApiClient.Get<List<ProductoDto>>($"{ApiUrls.Products}/api/products");
+        return productos?.ToDictionary(p => p.Id, p => p.Nombre) ?? new();
+    }
+
     private static async Task Ver()
     {
         var cart = await ApiClient.Get<CarritoDto>($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}");
-        if (cart != null)
+        if (cart == null) return;
+        if (cart.Items.Count == 0) { Console.WriteLine("el carrito esta vacio"); return; }
+
+        var nombres = await NombresDeProductos();
+        foreach (var i in cart.Items)
+            Console.WriteLine($"- {nombres.GetValueOrDefault(i.ProductoId, "producto desconocido")} x{i.Cantidad}");
+    }
+
+    private static async Task<ProductoDto?> ElegirProducto()
+    {
+        var productos = await ApiClient.Get<List<ProductoDto>>($"{ApiUrls.Products}/api/products");
+        if (productos == null) return null;
+        if (productos.Count == 0) { Console.WriteLine("no hay productos"); return null; }
+
+        for (var i = 0; i < productos.Count; i++)
+            Console.WriteLine($"{i + 1}) {productos[i].Nombre} ${productos[i].Precio} stock:{productos[i].Stock}");
+
+        Console.Write("numero del producto: ");
+        if (!int.TryParse(Console.ReadLine(), out var n) || n < 1 || n > productos.Count)
         {
-            if (cart.Items.Count == 0) { Console.WriteLine("el carrito esta vacio"); return; }
-            foreach (var i in cart.Items)
-                Console.WriteLine($"- producto {i.ProductoId.ToString().Substring(0, 4)}.. x{i.Cantidad}");
+            Console.WriteLine("numero invalido");
+            return null;
         }
+        return productos[n - 1];
+    }
+
+    private static async Task<CarritoItemDto?> ElegirItem()
+    {
+        var cart = await ApiClient.Get<CarritoDto>($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}");
+        if (cart == null) return null;
+        if (cart.Items.Count == 0) { Console.WriteLine("el carrito esta vacio"); return null; }
+
+        var nombres = await NombresDeProductos();
+        for (var i = 0; i < cart.Items.Count; i++)
+            Console.WriteLine($"{i + 1}) {nombres.GetValueOrDefault(cart.Items[i].ProductoId, "producto desconocido")} x{cart.Items[i].Cantidad}");
+
+        Console.Write("numero del item: ");
+        if (!int.TryParse(Console.ReadLine(), out var n) || n < 1 || n > cart.Items.Count)
+        {
+            Console.WriteLine("numero invalido");
+            return null;
+        }
+        return cart.Items[n - 1];
     }
 
     private static async Task Agregar()
     {
-        Console.Write("id del producto: "); var productoId = Console.ReadLine();
+        var producto = await ElegirProducto();
+        if (producto == null) return;
+
         Console.Write("cantidad: "); int.TryParse(Console.ReadLine(), out var cantidad);
 
-        var body = new { productoId, cantidad };
+        var body = new { productoId = producto.Id, cantidad };
         var cart = await ApiClient.Post<CarritoDto>($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}/items", body);
         if (cart != null) Console.WriteLine("agregado al carrito");
     }
 
     private static async Task Cambiar()
     {
-        Console.Write("id del producto: "); var productoId = Console.ReadLine();
+        var item = await ElegirItem();
+        if (item == null) return;
+
         Console.Write("nueva cantidad: "); int.TryParse(Console.ReadLine(), out var cantidad);
 
         var body = new { cantidad };
-        var cart = await ApiClient.Put<CarritoDto>($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}/items/{productoId}", body);
+        var cart = await ApiClient.Put<CarritoDto>($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}/items/{item.ProductoId}", body);
         if (cart != null) Console.WriteLine("cantidad actualizada");
     }
 
     private static async Task Sacar()
     {
-        Console.Write("id del producto: "); var productoId = Console.ReadLine();
-        var ok = await ApiClient.Delete($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}/items/{productoId}");
+        var item = await ElegirItem();
+        if (item == null) return;
+
+        var ok = await ApiClient.Delete($"{ApiUrls.Cart}/api/cart/{Sesion.UsuarioActualId}/items/{item.ProductoId}");
         if (ok) Console.WriteLine("producto sacado del carrito");
     }
 
