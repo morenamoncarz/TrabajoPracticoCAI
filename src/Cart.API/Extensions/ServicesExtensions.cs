@@ -41,6 +41,13 @@ public static class ServicesExtensions
             client.BaseAddress = new Uri(baseUrl);
         }).AddHttpMessageHandler<CorrelationIdPropagationHandler>();
 
+        services.AddHttpClient<INotificationsClient, NotificationsClient>((sp, client) =>
+        {
+            var baseUrl = sp.GetRequiredService<IConfiguration>()["NotificationsApi:BaseUrl"]
+                ?? "http://localhost:5026";
+            client.BaseAddress = new Uri(baseUrl);
+        }).AddHttpMessageHandler<CorrelationIdPropagationHandler>();
+
         services.AddHealthChecks()
             .AddCheck<SqliteHealthCheck>("sqlite-db", tags: new[] { "database", "ready" })
             .AddCheck<ApiStatusCheck>("api-status", tags: new[] { "api", "live" });
