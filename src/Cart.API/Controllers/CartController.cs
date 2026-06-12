@@ -67,6 +67,10 @@ public class CartController : ControllerBase
     /// 400 (CRT-004) cantidad invalida.
     /// 404 (CRT-002) producto no existe en Products API.
     /// 422 (CRT-003) stock insuficiente.
+    ///
+    /// Al agregar el item se le envia una notificacion al usuario a traves de
+    /// Notifications.API (fire-and-forget: si Notifications esta caido el carrito
+    /// se actualiza igual).
     /// </remarks>
     [HttpPost("{userId:guid}/items")]
     [ProducesResponseType(typeof(Models.Cart), StatusCodes.Status200OK)]

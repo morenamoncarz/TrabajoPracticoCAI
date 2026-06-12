@@ -19,6 +19,11 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Registra un nuevo usuario.
     /// </summary>
+    /// <remarks>
+    /// Al registrar el usuario se le envia una notificacion de bienvenida a traves de
+    /// Notifications.API. El envio es fire-and-forget: si Notifications esta caido el
+    /// registro se completa igual.
+    /// </remarks>
     [HttpPost("register")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

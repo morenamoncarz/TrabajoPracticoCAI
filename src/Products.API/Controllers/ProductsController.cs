@@ -104,6 +104,11 @@ public class ProductsController : ControllerBase
     ///       "stock": 8,
     ///       "categoria": "Electronica"
     ///     }
+    ///
+    /// Si cambia el precio, o si el stock queda en 0 o cruza el umbral bajo (por
+    /// defecto 5), se notifica via Notifications.API a los usuarios que tienen el
+    /// producto en su carrito (consultando Cart.API). Todo fire-and-forget: si Cart o
+    /// Notifications estan caidos, la actualizacion del producto se completa igual.
     /// </remarks>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
