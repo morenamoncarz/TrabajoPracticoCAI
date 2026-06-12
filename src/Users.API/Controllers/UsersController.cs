@@ -24,10 +24,10 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<UserResponse> Register(RegisterUserRequest request)
+    public async Task<ActionResult<UserResponse>> Register(RegisterUserRequest request)
     {
         // Este endpoint registra un nuevo usuario
-        var user = _service.Register(request);
+        var user = await _service.Register(request);
 
         return Created("/api/users/register", user);
     }
